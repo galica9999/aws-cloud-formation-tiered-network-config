@@ -3,9 +3,9 @@
   "Parameters": {
     "appCloudformationSG": { "Type": "String" },
     "webCloudformationSG": { "Type": "String" },
-    "appLaunchConfig": { "Type": "String" },
-    "insideCloudformationSubnetA": { "Type": "String" },
-    "insideCloudformationSubnetB": { "Type": "String" },
+    "webLaunchConfig": { "Type": "String" },
+    "outsideCloudformationSubnetA": { "Type": "String" },
+    "outsideCloudformationSubnetB": { "Type": "String" },
     "cloudformationVPC": { "Type": "String" },
     "webLaunchConfigVersion": { "Type": "String" }
   },
