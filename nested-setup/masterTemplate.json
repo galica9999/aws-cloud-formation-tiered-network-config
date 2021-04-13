@@ -292,7 +292,7 @@
         }
       }
     },
-    "LaunchConfigs": {
+    "appLaunchConfig": {
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["DBSetup"],
       "Properties": {
@@ -324,12 +324,12 @@
     },
     "AppAsgLb": {
       "Type": "AWS::CloudFormation::Stack",
-      "DependsOn": ["LaunchConfigs"],
+      "DependsOn": ["appLaunchConfig"],
       "Properties": {
         "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/app-asg-lb.json",
         "Parameters": {
           "appLaunchConfig": {
-            "Fn::GetAtt": ["LaunchConfigs", "Outputs.appLaunchConfig"]
+            "Fn::GetAtt": ["appLaunchConfig", "Outputs.appLaunchConfig"]
           },
           "insideCloudformationSubnetA": {
             "Fn::GetAtt": ["networkSetup", "Outputs.insideSubnetA"]
@@ -347,19 +347,38 @@
             "Fn::GetAtt": ["networkSetup", "Outputs.webSG"]
           },
           "appLaunchConfigVersion": {
-            "Fn::GetAtt": ["LaunchConfigs", "Outputs.appLaunchConfigVersion"]
+            "Fn::GetAtt": ["appLaunchConfig", "Outputs.appLaunchConfigVersion"]
           }
+        }
+      }
+    },
+    "webLaunchConfig": {
+      "Type": "AWS::CloudFormation::Stack",
+      "DependsOn": ["AppAsgLb"],
+      "Properties": {
+        "TemplateURL": "change",
+        "Parameters": {
+          "WebAMItype": { "Ref": "WebAMItype" },
+          "webAMI": { "Ref": "webAMI" },
+          "webKeyName": { "Ref": "webKeyName" },
+          "appCloudformationSG": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.appSG"]
+          },
+          "webCloudformationSG": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.webSG"]
+          },
+          "appALB": { "Fn:GetAtt": ["AppAsgLb", "Outputs.appLoadBalancer"] }
         }
       }
     },
     "WebAsgLb": {
       "Type": "AWS::CloudFormation::Stack",
-      "DependsOn": ["AppAsgLb"],
+      "DependsOn": ["webLaunchConfig"],
       "Properties": {
         "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/web-asg-lb.json",
         "Parameters": {
           "webLaunchConfig": {
-            "Fn::GetAtt": ["LaunchConfigs", "Outputs.webLaunchConfig"]
+            "Fn::GetAtt": ["webLaunchConfigs", "Outputs.webLaunchConfig"]
           },
           "outsideCloudformationSubnetA": {
             "Fn::GetAtt": ["networkSetup", "Outputs.outsideSubnetA"]
@@ -377,7 +396,25 @@
             "Fn::GetAtt": ["networkSetup", "Outputs.webSG"]
           },
           "webLaunchConfigVersion": {
-            "Fn::GetAtt": ["LaunchConfigs", "Outputs.webLaunchConfigVersion"]
+            "Fn::GetAtt": ["webLaunchConfigs", "Outputs.webLaunchConfigVersion"]
+          }
+        }
+      }
+    },
+    "SWCSetup": {
+      "Type": "AWS::CloudFormation::Stack",
+      "DependsOn": ["networkSetup"],
+      "Properties": {
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/swc-setup.json",
+        "Parameters": {
+          "VPCID": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.StackVPC"]
+          },
+          "S3BucketName": {
+            "Ref": "S3BucketName"
+          },
+          "ExternalID": {
+            "Ref": "ExternalID"
           }
         }
       }
