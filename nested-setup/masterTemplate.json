@@ -297,7 +297,7 @@
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["DBSetup"],
       "Properties": {
-        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/3-app-launch-configs.jsonn",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/3-app-launch-configs.json",
         "Parameters": {
           "WebAMItype": { "Ref": "WebAMItype" },
           "AppAMItype": { "Ref": "AppAMItype" },
