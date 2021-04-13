@@ -5,7 +5,7 @@ It has a master template that calls nested stacks for each portion of the networ
 
 It also has a single file that can be used instead of the nested setup.  This readme will go over how to use the nested-stack and how to make it your own.
 
-#Nested Stack Configuration Files
+# Nested Stack Configuration Files
 To access the nested stack files, you can go to the nested stack directory in this repo.  Within that directory there are 8 files in total.  The *masterTemplate.json* is the template you will use to run all the subsequent json files in this folder.  
 
 Each configuration file is numbered in the order that the master template calls them:
