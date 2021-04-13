@@ -244,7 +244,8 @@
     },
     "S3BucketName": {
       "Type": "String",
-      "Description": "Name the S3 bucket to be created to store VPC flow logs."
+      "Description": "Name the S3 bucket to be created to store VPC flow logs.",
+      "AllowedPattern": "[a-z0-9-]*"
     },
     "ExternalID": {
       "Type": "String",
@@ -255,7 +256,7 @@
     "networkSetup": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
-        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/network-setup.json",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/1-network-setup.json",
         "Parameters": {
           "CidrBlock": { "Ref": "CidrBlock" },
           "AvailabilityZone1": { "Ref": "AvailabilityZone1" },
@@ -272,7 +273,7 @@
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["networkSetup"],
       "Properties": {
-        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/db-setup.json",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/2-db-setup.json",
         "Parameters": {
           "DBInstanceID": { "Ref": "DBInstanceID" },
           "DBName": { "Ref": "DBName" },
@@ -296,7 +297,7 @@
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["DBSetup"],
       "Properties": {
-        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/launch-configs.json",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/3-app-launch-configs.jsonn",
         "Parameters": {
           "WebAMItype": { "Ref": "WebAMItype" },
           "AppAMItype": { "Ref": "AppAMItype" },
@@ -326,7 +327,7 @@
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["appLaunchConfig"],
       "Properties": {
-        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/app-asg-lb.json",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/4-app-asg-lb.json",
         "Parameters": {
           "appLaunchConfig": {
             "Fn::GetAtt": ["appLaunchConfig", "Outputs.appLaunchConfig"]
@@ -356,7 +357,7 @@
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["AppAsgLb"],
       "Properties": {
-        "TemplateURL": "change",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/5-web-launch-configs.json",
         "Parameters": {
           "WebAMItype": { "Ref": "WebAMItype" },
           "webAMI": { "Ref": "webAMI" },
@@ -367,7 +368,7 @@
           "webCloudformationSG": {
             "Fn::GetAtt": ["networkSetup", "Outputs.webSG"]
           },
-          "appALB": { "Fn:GetAtt": ["AppAsgLb", "Outputs.appLoadBalancer"] }
+          "appALB": { "Fn::GetAtt": ["AppAsgLb", "Outputs.appLoadBalancer"] }
         }
       }
     },
@@ -375,10 +376,10 @@
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["webLaunchConfig"],
       "Properties": {
-        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/web-asg-lb.json",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/6-web-asg-lb.json",
         "Parameters": {
           "webLaunchConfig": {
-            "Fn::GetAtt": ["webLaunchConfigs", "Outputs.webLaunchConfig"]
+            "Fn::GetAtt": ["webLaunchConfig", "Outputs.webLaunchConfig"]
           },
           "outsideCloudformationSubnetA": {
             "Fn::GetAtt": ["networkSetup", "Outputs.outsideSubnetA"]
@@ -396,7 +397,7 @@
             "Fn::GetAtt": ["networkSetup", "Outputs.webSG"]
           },
           "webLaunchConfigVersion": {
-            "Fn::GetAtt": ["webLaunchConfigs", "Outputs.webLaunchConfigVersion"]
+            "Fn::GetAtt": ["webLaunchConfig", "Outputs.webLaunchConfigVersion"]
           }
         }
       }
@@ -405,7 +406,7 @@
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["networkSetup"],
       "Properties": {
-        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/swc-setup.json",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/2-swc-setup.json",
         "Parameters": {
           "VPCID": {
             "Fn::GetAtt": ["networkSetup", "Outputs.StackVPC"]
