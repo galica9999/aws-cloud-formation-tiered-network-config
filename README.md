@@ -16,9 +16,23 @@ Each configuration file is numbered in the order that the master template calls 
 * 4-app-asg-lb
 * 5-web-launch-config
 * 6-web-asg-lb
+* masterTemplate
 
 Each number for each file is the step at which they take place in the master template.  You can see that there are two step **2** files.  One for the database and one for stealthwatch.  This means that they do not rely on another portion of the configuration to be finished before another one can start.  All of the rest that continue the numbering depend on onf of the others before it.  
 
 
+## Master Template Overview
+The master template has three main sectionns in it.  
+1. Description
+2. Parameters
+3. Resources
 
+#### Description
+The description is a blurb of what the template is for so that anyone reading it will be able to tell its use.
+
+#### Parameters
+The parameters are values that are to be passed into the template when it is run in cloudformation.  The parameters looks like so within the file:
+![image](https://user-images.githubusercontent.com/10239022/114605903-924d3f80-9c68-11eb-9ad6-7e9337578c54.png)
+
+These same parameters that are defined in the file will show up when you attempt to create a stack in CloudFormation like so:
 
