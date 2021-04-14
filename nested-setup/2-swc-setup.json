@@ -43,7 +43,7 @@
     "ObservableRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "RoleName": "observble_role",
+        "RoleName": { "Fn::Sub": "${AWS::StackName}-observble_role" },
         "AssumeRolePolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
