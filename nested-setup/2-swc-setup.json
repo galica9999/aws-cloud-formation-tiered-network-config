@@ -69,7 +69,7 @@
     "ObservablePolicy": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
-        "PolicyName": "Obsrvble_policy",
+        "PolicyName": { "Fn::Sub": "${AWS::StackName}-Obsrvble_policy" },
         "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
@@ -114,7 +114,7 @@
     "Observables3Policy": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
-        "PolicyName": "Obsrvble_s3policy",
+        "PolicyName": { "Fn::Sub": "${AWS::StackName}-Obsrvble_s3policy" },
         "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [

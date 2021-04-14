@@ -84,7 +84,7 @@
       "Properties": {
         "LaunchTemplateData": {
           "ImageId": { "Ref": "webAMI" },
-          "InstanceType": { "Ref": "AppAMItype" },
+          "InstanceType": { "Ref": "WebAMItype" },
           "KeyName": { "Ref": "webKeyName" },
           "SecurityGroupIds": [{ "Ref": "webCloudformationSG" }],
           "UserData": {
@@ -121,7 +121,7 @@
       "Description": "Web launchconfig",
       "Value": { "Ref": "webLaunchConfig" },
       "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-webpLaunchConfig" }
+        "Name": { "Fn::Sub": "${AWS::StackName}-webLaunchConfig" }
       }
     },
     "webLaunchConfigVersion": {
