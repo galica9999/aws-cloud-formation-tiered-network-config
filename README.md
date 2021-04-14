@@ -35,4 +35,5 @@ The parameters are values that are to be passed into the template when it is run
 ![image](https://user-images.githubusercontent.com/10239022/114605903-924d3f80-9c68-11eb-9ad6-7e9337578c54.png)
 
 These same parameters that are defined in the file will show up when you attempt to create a stack in CloudFormation like so:
+![image](https://user-images.githubusercontent.com/10239022/114731629-e7905c00-9d0f-11eb-87af-dbff6055f3c3.png)
 
