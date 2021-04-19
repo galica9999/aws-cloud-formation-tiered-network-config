@@ -89,7 +89,7 @@ The CidrBLock parameter has four parameters.
 Since we have gone over AllowedPattern, Default, and Description we will not go over them again unless there is a major change in them.  But for the most part the values will change, but the concept will remain the same.
 
 ### DBInstanceID
-This field is used to name the database when it is created.
+This field is used to name the identifier when it is created. The identifier is used as the true name of the database when referncing it.
 ```json
 "DBInstanceID": {
       "Default": "mydbinstance",
@@ -106,6 +106,7 @@ This field is used to name the database when it is created.
 * **ConstraintDescription** - This is used to tell a user that there are requirements when creating this field.
 
 ### DBName
+This field is used to name the database.  Its used as an easy to find name for us to use.
 ```json
 "DBName": {
       "Default": "mydb",
@@ -116,4 +117,74 @@ This field is used to name the database when it is created.
       "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
       "ConstraintDescription": "Must begin with a letter and contain only alphanumeric characters."
     }
-    ```
+  ```
+    
+### DBInstanceClass
+This field is used to determine the class type to be used.  This determine show much ram and cpu it will have on hand.
+```json
+"DBInstanceClass": {
+      "Default": "db.m5.large",
+      "Description": "DB instance class",
+      "Type": "String",
+      "ConstraintDescription": "Must select a valid DB instance type."
+    }
+  ```
+
+### DBAllocatedStorage
+This field will be used to determine the size of the database.
+```json
+"DBAllocatedStorage": {
+      "Default": "50",
+      "Description": "The size of the database (GiB)",
+      "Type": "Number",
+      "MinValue": "5",
+      "MaxValue": "1024",
+      "ConstraintDescription": "must be between 20 and 65536 GiB."
+    }
+  ```
+* **Type** - The type for this parameter is Number instead of string.  This means it will only take a number (0-9).
+
+### DBUsername
+This field is to name the user that will be used to access the database.
+```json
+"DBUsername": {
+      "Description": "Username for MySQL database access",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "16",
+      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
+    }
+```
+
+### DBPassword
+This field is used to create a password for the database user being created.
+```javascript
+"DBPassword": {
+      "NoEcho": "true",
+      "Description": "Password MySQL database access",
+      "Type": "String",
+      "MinLength": "8",
+      "MaxLength": "41",
+      "AllowedPattern": "[a-zA-Z0-9]*",
+      "ConstraintDescription": "must contain only alphanumeric characters."
+    }
+```
+* **NoEcho** - This field means the password will not be seen while typing it for security reasons.
+
+### AppAMItype
+```javascript
+"AppAMItype": {
+      "Description": "Instance type for app server",
+      "Type": "String",
+      "Default": "t2.micro",
+      "AllowedValues": [
+        "t1.micro",
+        "t2.nano",
+        "t2.micro",
+        "t2.small",
+        "t2.medium",
+        "t2.large"
+        ]
+      }
+```
