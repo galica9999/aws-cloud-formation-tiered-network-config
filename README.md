@@ -306,3 +306,5 @@ This field allows us to choose the availability zone to be used for each subnet.
 * **Type** - The type is of an AWS resource.  It is looking for any availability zones that are available within EC2 and creates a dropdown to show us the zones we can select.
 </p>
 </details>
+
+## Resources
