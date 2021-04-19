@@ -74,7 +74,7 @@ Within each parameter we go over, we will put the parameter in a code block and 
 
 
 #### CidrBlock
-<details>
+      <details>
       <summary>Drop Down</summary>
 <p>CidrBlock is used to define the subnet to be used for the VPC being created.  It is repeated for each smaller subnet that will be used within the template(OutsideNet, InsideNet, DBNet). 
       
