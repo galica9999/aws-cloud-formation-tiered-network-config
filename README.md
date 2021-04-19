@@ -74,6 +74,24 @@ Within each parameter we go over, we will put the parameter in a code block and 
 <details>
 <summary>CidrBlock</summary>
 <br>
+<p>CidrBlock is used to define the subnet to be used for the VPC being created.  It is repeated for each smaller subnet that will be used within the template(OutsideNet, InsideNet, DBNet).</p>
+<code>
+"CidrBlock": {
+      "AllowedPattern": "((\\d{1,3})\\.){3}\\d{1,3}/\\d{1,2}",
+      "Default": "10.0.0.0/16",
+      "Description": "VPC CIDR Block (eg 10.0.0.0/16)",
+      "Type": "String"
+      </code>
+The CidrBLock parameter has four parameters.  
+* **AllowedPattern** - This contains a regex to allow certain text to be entered into the input.
+* **Default** - This is used to make have the input laod with a default value.  In this case it is a whole subnet.
+* **Description** - This contains an explanation of what the input is used for or what should be input.
+* **Type** - *REQUIRED* - This field is required and determines how it will be interpreted as a parameter.  SInnce it is of type strinng, it will be an input box when looking at the parameter section in CloudFormation. For other parameters it could be a dropdown, but this is determined by the type.
+
+Since we have gone over AllowedPattern, Default, and Description we will not go over them again unless there is a major change in them.  But for the most part the values will change, but the concept will remain the same.
+</details>
+
+
 CidrBlock is used to define the subnet to be used for the VPC being created.  It is repeated for each smaller subnet that will be used within the template(OutsideNet, InsideNet, DBNet).  
 ```json
 "CidrBlock": {
@@ -90,7 +108,10 @@ The CidrBLock parameter has four parameters.
 * **Type** - *REQUIRED* - This field is required and determines how it will be interpreted as a parameter.  SInnce it is of type strinng, it will be an input box when looking at the parameter section in CloudFormation. For other parameters it could be a dropdown, but this is determined by the type.
 
 Since we have gone over AllowedPattern, Default, and Description we will not go over them again unless there is a major change in them.  But for the most part the values will change, but the concept will remain the same.
-</details>
+
+
+
+
 
 ### DBInstanceID
 This field is used to name the identifier when it is created. The identifier is used as the true name of the database when referncing it.
