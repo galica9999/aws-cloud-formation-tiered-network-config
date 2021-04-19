@@ -69,7 +69,7 @@ We will go over these parameters since most of them are repeated with different 
 * ExternalID
 * AvailabilityZone1
 
-Within each parameter we go over, we will put the parameter in a code block and break it down.  For the AMI type paremters, we will shorten them because they are very large.
+Within each parameter we go over, we will put the parameter in a code block and break it down.  For the AMI type parameters, we will shorten them because they are very large.
 
 
 
@@ -308,3 +308,16 @@ This field allows us to choose the availability zone to be used for each subnet.
 </details>
 
 ## Resources
+The resources section is where we define the different resources we want to create within AWS.  In this section we do not directly make the resources, we instead call out to another configuration file and that is the file that holds the creation information.  This is what will create our nested stacks.
+
+We will be going over the 7 resources that we are creating in this master template:
+* networkSetup
+* DBSetup
+* SWCSetup
+* appLaunchConfig
+* AppAsgLb
+* webLaunchConfig
+* WebAsgLb
+
+We will go over each one of these resources and then each resource will have their own section.
+
