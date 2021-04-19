@@ -98,29 +98,11 @@ Since we have gone over AllowedPattern, Default, and Description we will not go 
 </details>
 
 
-
-
-
-### CidrBlock
-CidrBlock is used to define the subnet to be used for the VPC being created.  It is repeated for each smaller subnet that will be used within the template(OutsideNet, InsideNet, DBNet).  
-```json
-"CidrBlock": {
-      "AllowedPattern": "((\\d{1,3})\\.){3}\\d{1,3}/\\d{1,2}",
-      "Default": "10.0.0.0/16",
-      "Description": "VPC CIDR Block (eg 10.0.0.0/16)",
-      "Type": "String"
-    }
-```
-The CidrBLock parameter has four parameters.  
-* **AllowedPattern** - This contains a regex to allow certain text to be entered into the input.
-* **Default** - This is used to make have the input laod with a default value.  In this case it is a whole subnet.
-* **Description** - This contains an explanation of what the input is used for or what should be input.
-* **Type** - *REQUIRED* - This field is required and determines how it will be interpreted as a parameter.  SInnce it is of type strinng, it will be an input box when looking at the parameter section in CloudFormation. For other parameters it could be a dropdown, but this is determined by the type.
-
-Since we have gone over AllowedPattern, Default, and Description we will not go over them again unless there is a major change in them.  But for the most part the values will change, but the concept will remain the same.
-
 ### DBInstanceID
+<details>
+      <summary></summary><p>
 This field is used to name the identifier when it is created. The identifier is used as the true name of the database when referncing it.
+      
 ```json
 "DBInstanceID": {
       "Default": "mydbinstance",
@@ -132,12 +114,18 @@ This field is used to name the identifier when it is created. The identifier is 
       "ConstraintDescription": "Must begin with a letter and must not end with a hyphen or contain two consecutive hyphens."
     }
 ```
+
 * **MinLength** - This ensures the field is not left empty.
 * **MaxLength** - The ensures the field does not have too many characters.
 * **ConstraintDescription** - This is used to tell a user that there are requirements when creating this field.
+</p>
+</details>
 
 ### DBName
+<details>
+      <summary></summary><p>
 This field is used to name the database.  Its used as an easy to find name for us to use.
+      
 ```json
 "DBName": {
       "Default": "mydb",
@@ -149,9 +137,14 @@ This field is used to name the database.  Its used as an easy to find name for u
       "ConstraintDescription": "Must begin with a letter and contain only alphanumeric characters."
     }
   ```
-    
+
+</p>
+</details>
 ### DBInstanceClass
+<details>
+      <summary></summary><p>
 This field is used to determine the class type to be used.  This determine show much ram and cpu it will have on hand.
+      
 ```json
 "DBInstanceClass": {
       "Default": "db.m5.large",
@@ -161,8 +154,13 @@ This field is used to determine the class type to be used.  This determine show 
     }
   ```
 
+</p>
+</details>
 ### DBAllocatedStorage
+<details>
+      <summary></summary><p>
 This field will be used to determine the size of the database.
+      
 ```json
 "DBAllocatedStorage": {
       "Default": "50",
@@ -173,10 +171,16 @@ This field will be used to determine the size of the database.
       "ConstraintDescription": "must be between 20 and 65536 GiB."
     }
   ```
+  
 * **Type** - The type for this parameter is Number instead of string.  This means it will only take a number (0-9).
+</p>
+</details>
 
 ### DBUsername
+<details>
+      <summary></summary><p>
 This field is to name the user that will be used to access the database.
+      
 ```json
 "DBUsername": {
       "Description": "Username for MySQL database access",
@@ -188,8 +192,14 @@ This field is to name the user that will be used to access the database.
     }
 ```
 
+</p>
+</details>
+
 ### DBPassword
+<details>
+      <summary></summary><p>
 This field is used to create a password for the database user being created.
+      
 ```javascript
 "DBPassword": {
       "NoEcho": "true",
@@ -201,10 +211,16 @@ This field is used to create a password for the database user being created.
       "ConstraintDescription": "must contain only alphanumeric characters."
     }
 ```
+
 * **NoEcho** - This field means the password will not be seen while typing it for security reasons.
+</p>
+</details>
 
 ### AppAMItype
+<details>
+      <summary></summary><p>
 This field is used to determine the AMI type.  It determines how much ram and cpu is allocated to it.  
+      
 ```javascript
 "AppAMItype": {
       "Description": "Instance type for app server",
@@ -220,20 +236,33 @@ This field is used to determine the AMI type.  It determines how much ram and cp
         ]
       }
 ```
+
 * **AllowedValues** - This field is always a list and will create a selectable dropdown of values that can be used in this parameter.
 
+</p>
+</details>
+
 ### appKeyName
+<details>
+      <summary></summary><p>
 This field allows us to select a keypair that will be used to ssh into the AMIs after they have been created.
+      
 ```json
 "appKeyName": {
       "Description": "EC2 KeyPair to enable SSH access to the instance",
       "Type": "AWS::EC2::KeyPair::KeyName"
     }
 ```
+
 * **Type** - The type is of an AWS resource.  It is looking for any keys that have been created within EC2 and creates a dropdown to show us the keys we can select.
+</p>
+</details>
 
 ### S3BucketName
+<details>
+      <summary></summary><p>
 This field allows us to name our S3 bucket that will be used to store our logs.
+      
 ```json
 "S3BucketName": {
       "Type": "String",
@@ -242,8 +271,14 @@ This field allows us to name our S3 bucket that will be used to store our logs.
     }
 ```
 
+</p>
+</details>
+
 ### ExternalID
+<details>
+      <summary></summary><p>
 This field lets us input the external ID used to connect Stealth Watch to our VPC.
+      
 ```json
 "ExternalID": {
       "Type": "String",
@@ -251,12 +286,21 @@ This field lets us input the external ID used to connect Stealth Watch to our VP
     }
 ```
 
+</p>
+</details>
+
 ### AvailabilityZone1
+<details>
+      <summary></summary><p>
 This field allows us to choose the availability zone to be used for each subnet.
+      
 ```json
 "AvailabilityZone1": {
       "Description": "The AvailabilityZone to use for the first subnet",
       "Type": "AWS::EC2::AvailabilityZone::Name"
     }
 ```
+
 * **Type** - The type is of an AWS resource.  It is looking for any availability zones that are available within EC2 and creates a dropdown to show us the zones we can select.
+</p>
+</details>
