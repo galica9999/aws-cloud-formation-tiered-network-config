@@ -74,9 +74,11 @@ Within each parameter we go over, we will put the parameter in a code block and 
 
 
 ### CidrBlock
-<details><summary><span></span></summary>
+<details>
+<summary><span></span></summary>
 <p>CidrBlock is used to define the subnet to be used for the VPC being created.  It is repeated for each smaller subnet that will be used within the template(OutsideNet, InsideNet, DBNet). 
-```
+      
+```json
 "CidrBlock": {
       "AllowedPattern": "((\\d{1,3})\\.){3}\\d{1,3}/\\d{1,2}",
       "Default": "10.0.0.0/16",
