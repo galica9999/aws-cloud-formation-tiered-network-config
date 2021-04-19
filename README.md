@@ -53,6 +53,38 @@ These same parameters that are defined in the file will show up when you attempt
 
 We do not need to use parameters, but it makes the setup more dynamic and allows the use of the files without needing to manually change the fields in the file each time we want something to be different.
 
-In our parameters section we have a multitude of inputs.  
+In our parameters section we have a multitude of inputs. There are inputs for the subnets, availability zones, names for the database and S3 bucket, types for the instances (t2.mirco/m2.medium)., and a username/password for the database.
 
+We will go over these parameters since most of them are repeated with different names:
+* CidrBlock
+* DBInstanceID
+* DBName
+* DBInstanceClass
+* DBAllocatedStorage
+* DBUsername
+* DBPassword
+* AppAMItype
+* appKeyName
+* S3BucketName
+* ExternalID
+
+Within each parameter we go over, we will put the parameter in a code block and break it down.  For the AMI type paremters, we will shorten them because they are very large.
+
+###### CidrBlock
+
+```json
+"CidrBlock": {
+      "AllowedPattern": "((\\d{1,3})\\.){3}\\d{1,3}/\\d{1,2}",
+      "Default": "10.0.0.0/16",
+      "Description": "VPC CIDR Block (eg 10.0.0.0/16)",
+      "Type": "String"
+    }
+```
+The CidrBLock parameter has four parameters.  
+* **AllowedPattern** - This contains a regex to allow certain text to be entered into the input.
+* **Default** - This is used to make have the input laod with a default value.  In this case it is a whole subnet.
+* **Description** - This contains an explanation of what the input is used for or what should be input.
+* **Type** - *REQUIRED* This field is required and determines how it will be interpreted as a parameter.  SInnce it is of type strinng, it will be an input box when looking at the parameter section in CloudFormation. For other parameters it could be a dropdown, but this is determined by the type.
+
+The key that is required is the **Type**.  The type is a string and it means it will be a text box for us to enter in a value to be used.
 
