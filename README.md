@@ -74,7 +74,7 @@ Within each parameter we go over, we will put the parameter in a code block and 
 
 
 ### CidrBlock
-<details>
+<details><summary><span><h3>CidrBlock</h3></span></summary>
 <p>
 
 #### yes, even hidden code blocks!
