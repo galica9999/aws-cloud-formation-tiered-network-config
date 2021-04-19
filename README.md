@@ -140,6 +140,7 @@ This field is used to name the database.  Its used as an easy to find name for u
 
 </p>
 </details>
+
 ### DBInstanceClass
 <details>
       <summary></summary><p>
@@ -156,6 +157,7 @@ This field is used to determine the class type to be used.  This determine show 
 
 </p>
 </details>
+
 ### DBAllocatedStorage
 <details>
       <summary></summary><p>
