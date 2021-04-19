@@ -71,7 +71,7 @@ We will go over these parameters since most of them are repeated with different 
 Within each parameter we go over, we will put the parameter in a code block and break it down.  For the AMI type paremters, we will shorten them because they are very large.
 
 ##### CidrBlock
-
+CidrBlock is used to define the subnet to be used for the VPC being created.  It is repeated for each smaller subnet that will be used within the template(OutsideNet, InsideNet, DBNet).  
 ```json
 "CidrBlock": {
       "AllowedPattern": "((\\d{1,3})\\.){3}\\d{1,3}/\\d{1,2}",
@@ -88,5 +88,32 @@ The CidrBLock parameter has four parameters.
 
 Since we have gone over AllowedPattern, Default, and Description we will not go over them again unless there is a major change in them.  But for the most part the values will change, but the concept will remain the same
 
-##### DBInstanceID
+##### DBInstanceID 
+This field is used to name the database when it is created.
+```json
+"DBInstanceID": {
+      "Default": "mydbinstance",
+      "Description": "My database instance",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "63",
+      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription": "Must begin with a letter and must not end with a hyphen or contain two consecutive hyphens."
+    }
+```
+* **MinLength** - This ensures the field is not left empty.
+* **MaxLength** - The ensures the field does not have too many characters.
+* **ConstraintDescription** - This is used to tell a user that there are requirements when creating this field.
 
+##### DBName
+```json
+"DBName": {
+      "Default": "mydb",
+      "Description": "My database",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "64",
+      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription": "Must begin with a letter and contain only alphanumeric characters."
+    }
+    ```
