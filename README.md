@@ -75,7 +75,7 @@ Within each parameter we go over, we will put the parameter in a code block and 
 
 ### CidrBlock
 <details>
-      <summary></summary>
+      <summary>Drop Down</summary>
 <p>CidrBlock is used to define the subnet to be used for the VPC being created.  It is repeated for each smaller subnet that will be used within the template(OutsideNet, InsideNet, DBNet). 
       
 ```json
@@ -100,7 +100,7 @@ Since we have gone over AllowedPattern, Default, and Description we will not go 
 
 ### DBInstanceID
 <details>
-      <summary></summary><p>
+      <summary>Drop Down</summary><p>
 This field is used to name the identifier when it is created. The identifier is used as the true name of the database when referncing it.
       
 ```json
@@ -123,7 +123,7 @@ This field is used to name the identifier when it is created. The identifier is 
 
 ### DBName
 <details>
-      <summary></summary><p>
+      <summary>Drop Down</summary><p>
 This field is used to name the database.  Its used as an easy to find name for us to use.
       
 ```json
@@ -143,7 +143,7 @@ This field is used to name the database.  Its used as an easy to find name for u
 
 ### DBInstanceClass
 <details>
-      <summary></summary><p>
+      <summary>Drop Down</summary><p>
 This field is used to determine the class type to be used.  This determine show much ram and cpu it will have on hand.
       
 ```json
@@ -160,7 +160,7 @@ This field is used to determine the class type to be used.  This determine show 
 
 ### DBAllocatedStorage
 <details>
-      <summary></summary><p>
+      <summary>Drop Down</summary><p>
 This field will be used to determine the size of the database.
       
 ```json
@@ -180,7 +180,7 @@ This field will be used to determine the size of the database.
 
 ### DBUsername
 <details>
-      <summary></summary><p>
+      <summary>Drop Down</summary><p>
 This field is to name the user that will be used to access the database.
       
 ```json
@@ -199,7 +199,7 @@ This field is to name the user that will be used to access the database.
 
 ### DBPassword
 <details>
-      <summary></summary><p>
+      <summary>Drop Down</summary><p>
 This field is used to create a password for the database user being created.
       
 ```javascript
@@ -220,7 +220,7 @@ This field is used to create a password for the database user being created.
 
 ### AppAMItype
 <details>
-      <summary></summary><p>
+      <summary>Drop Down</summary><p>
 This field is used to determine the AMI type.  It determines how much ram and cpu is allocated to it.  
       
 ```javascript
@@ -246,7 +246,7 @@ This field is used to determine the AMI type.  It determines how much ram and cp
 
 ### appKeyName
 <details>
-      <summary></summary><p>
+      <summary>Drop Down</summary><p>
 This field allows us to select a keypair that will be used to ssh into the AMIs after they have been created.
       
 ```json
@@ -262,7 +262,7 @@ This field allows us to select a keypair that will be used to ssh into the AMIs 
 
 ### S3BucketName
 <details>
-      <summary></summary><p>
+      <summary>Drop Down</summary><p>
 This field allows us to name our S3 bucket that will be used to store our logs.
       
 ```json
@@ -278,7 +278,7 @@ This field allows us to name our S3 bucket that will be used to store our logs.
 
 ### ExternalID
 <details>
-      <summary></summary><p>
+      <summary>Drop Down</summary><p>
 This field lets us input the external ID used to connect Stealth Watch to our VPC.
       
 ```json
@@ -293,7 +293,7 @@ This field lets us input the external ID used to connect Stealth Watch to our VP
 
 ### AvailabilityZone1
 <details>
-      <summary></summary><p>
+      <summary>Drop Down</summary><p>
 This field allows us to choose the availability zone to be used for each subnet.
       
 ```json
