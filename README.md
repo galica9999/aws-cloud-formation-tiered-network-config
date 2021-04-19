@@ -70,7 +70,7 @@ We will go over these parameters since most of them are repeated with different 
 
 Within each parameter we go over, we will put the parameter in a code block and break it down.  For the AMI type paremters, we will shorten them because they are very large.
 
-###### CidrBlock
+##### CidrBlock
 
 ```json
 "CidrBlock": {
