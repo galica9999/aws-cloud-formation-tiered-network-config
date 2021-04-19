@@ -86,5 +86,7 @@ The CidrBLock parameter has four parameters.
 * **Description** - This contains an explanation of what the input is used for or what should be input.
 * **Type** - *REQUIRED* - This field is required and determines how it will be interpreted as a parameter.  SInnce it is of type strinng, it will be an input box when looking at the parameter section in CloudFormation. For other parameters it could be a dropdown, but this is determined by the type.
 
-The key that is required is the **Type**.  The type is a string and it means it will be a text box for us to enter in a value to be used.
+Since we have gone over AllowedPattern, Default, and Description we will not go over them again unless there is a major change in them.  But for the most part the values will change, but the concept will remain the same
+
+##### DBInstanceID
 
