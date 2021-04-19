@@ -67,6 +67,7 @@ We will go over these parameters since most of them are repeated with different 
 * appKeyName
 * S3BucketName
 * ExternalID
+* AvailabilityZone1
 
 Within each parameter we go over, we will put the parameter in a code block and break it down.  For the AMI type paremters, we will shorten them because they are very large.
 
@@ -173,6 +174,7 @@ This field is used to create a password for the database user being created.
 * **NoEcho** - This field means the password will not be seen while typing it for security reasons.
 
 ### AppAMItype
+This field is used to determine the AMI type.  It determines how much ram and cpu is allocated to it.  
 ```javascript
 "AppAMItype": {
       "Description": "Instance type for app server",
@@ -188,3 +190,26 @@ This field is used to create a password for the database user being created.
         ]
       }
 ```
+* **AllowedValues** - This field is always a list and will create a selectable dropdown of values that can be used in this parameter.
+
+### appKeyName
+```json
+"appKeyName": {
+      "Description": "EC2 KeyPair to enable SSH access to the instance",
+      "Type": "AWS::EC2::KeyPair::KeyName"
+    }
+```
+* **Type** - The type is of an AWS resource.  It is looking for any keys that have been created within EC2 and creates a dropdown to show us the keys we can select.
+
+### S3BucketName
+
+
+### AvailabilityZone1
+This field allows us to choose the availability zone to be used for each subnet.
+```json
+"AvailabilityZone1": {
+      "Description": "The AvailabilityZone to use for the first subnet",
+      "Type": "AWS::EC2::AvailabilityZone::Name"
+    }
+```
+* **Type** - The type is of an AWS resource.  It is looking for any availability zones that are available within EC2 and creates a dropdown to show us the zones we can select.
