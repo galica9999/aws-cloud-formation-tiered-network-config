@@ -193,6 +193,7 @@ This field is used to determine the AMI type.  It determines how much ram and cp
 * **AllowedValues** - This field is always a list and will create a selectable dropdown of values that can be used in this parameter.
 
 ### appKeyName
+This field allows us to select a keypair that will be used to ssh into the AMIs after they have been created.
 ```json
 "appKeyName": {
       "Description": "EC2 KeyPair to enable SSH access to the instance",
@@ -202,7 +203,23 @@ This field is used to determine the AMI type.  It determines how much ram and cp
 * **Type** - The type is of an AWS resource.  It is looking for any keys that have been created within EC2 and creates a dropdown to show us the keys we can select.
 
 ### S3BucketName
+This field allows us to name our S3 bucket that will be used to store our logs.
+```json
+"S3BucketName": {
+      "Type": "String",
+      "Description": "Name the S3 bucket to be created to store VPC flow logs.",
+      "AllowedPattern": "[a-z0-9-]*"
+    }
+```
 
+### ExternalID
+This field lets us input the external ID used to connect Stealth Watch to our VPC.
+```json
+"ExternalID": {
+      "Type": "String",
+      "Description": "The Stealthwatch cloud Observable ID."
+    }
+```
 
 ### AvailabilityZone1
 This field allows us to choose the availability zone to be used for each subnet.
