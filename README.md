@@ -15,7 +15,10 @@ The processes above are called *stacks*.  So each time a resource is created, it
 This guide will break down how we achieved this setup and how it works.  As we get to a new portion of the file, we will go over how we share resources within files, how they are called, and what is happening.
 
 # What will be created with this setup?
-With these configuration files, we will be building out a 3 tiered application setup using a nested stack setup.  
+With these configuration files, we will be building out a 3 tiered architecture setup using a nested stack setup.  The architecture will look so:
+### insert photo here once its been diagramed
+
+The architecure consists of a web tier that lives in a public subnet, an application tier that is in a private subnet, and a database tier that is in another private subnet.  The web tier has an application load balancer that will balance requests between multiple hosts within the subnet.  Then each host in the web applicaiton tier will reach out to a load balancer for the application tier.  This laod balancer will do the same thing as the web balancer but for the application hosts.  Then the application hosts will reach out the database without a load balancer.  The end goal of this setup is to have a running web application utilizing this architecture.
 
 # Nested stack configuration files
 To access the nested stack files, you can go to the nested stack directory in this repo.  Within that directory there are 8 files in total.  The *masterTemplate.json* is the template you will use to run all the subsequent json files in this folder.  
@@ -31,7 +34,6 @@ Each configuration file is numbered in the order that the master template calls 
 * masterTemplate
 
 Each number for each file is the step at which they take place in the master template.  You can see that there are two step **2** files.  One for the database and one for stealthwatch.  This means that they do not rely on another portion of the configuration to be finished before another one can start.  All of the rest that continue the numbering depend on onf of the others before it.  
-
 
 ## Master Template Overview
 The master template has three main sectionns in it.  
