@@ -35,16 +35,16 @@ Each configuration file is numbered in the order that the master template calls 
 
 Each number for each file is the step at which they take place in the master template.  You can see that there are two step **2** files.  One for the database and one for stealthwatch.  This means that they do not rely on another portion of the configuration to be finished before another one can start.  All of the rest that continue the numbering depend on one of the others before it.  
 
-## Master Template Overview
+# Master Template Overview
 The master template has three main sections in it.  
 1. Description
 2. Parameters
 3. Resources
 
-#### Description
+## Description
 The description is a blurb of what the template is for so that anyone reading it will be able to tell its use.
 
-#### Parameters
+## Parameters
 The parameters are values that are to be passed into the template when it is run in CloudFormation. Parameters can be a name for S3 Bucket (file storage) or a cidr block for a subnet and many other things can be passed into it.  Parameters look like so within the file:
 ![image](https://user-images.githubusercontent.com/10239022/114605903-924d3f80-9c68-11eb-9ad6-7e9337578c54.png)
 
@@ -70,7 +70,7 @@ We will go over these parameters since most of them are repeated with different 
 
 Within each parameter we go over, we will put the parameter in a code block and break it down.  For the AMI type paremters, we will shorten them because they are very large.
 
-* ##### CidrBlock
+### CidrBlock
 CidrBlock is used to define the subnet to be used for the VPC being created.  It is repeated for each smaller subnet that will be used within the template(OutsideNet, InsideNet, DBNet).  
 ```json
 "CidrBlock": {
@@ -88,7 +88,7 @@ The CidrBLock parameter has four parameters.
 
 Since we have gone over AllowedPattern, Default, and Description we will not go over them again unless there is a major change in them.  But for the most part the values will change, but the concept will remain the same.
 
-* ##### DBInstanceID
+### DBInstanceID
 This field is used to name the database when it is created.
 ```json
 "DBInstanceID": {
@@ -105,7 +105,7 @@ This field is used to name the database when it is created.
 * **MaxLength** - The ensures the field does not have too many characters.
 * **ConstraintDescription** - This is used to tell a user that there are requirements when creating this field.
 
-* ##### DBName
+### DBName
 ```json
 "DBName": {
       "Default": "mydb",
