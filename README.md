@@ -55,4 +55,4 @@ We do not need to use parameters, but it makes the setup more dynamic and allows
 
 In our parameters section we have a multitude of inputs.  
 
-![image](https://user-images.githubusercontent.com/10239022/115259128-9b725c80-a0ff-11eb-8db0-974c343281a9.png)
+
