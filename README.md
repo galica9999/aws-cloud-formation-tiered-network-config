@@ -72,7 +72,7 @@ We will go over these parameters since most of them are repeated with different 
 Within each parameter we go over, we will put the parameter in a code block and break it down.  For the AMI type paremters, we will shorten them because they are very large.
 
 <details>
-<h3><summary>CidrBlock</summary></h3>
+<summary>CidrBlock</summary>
 <br>
 CidrBlock is used to define the subnet to be used for the VPC being created.  It is repeated for each smaller subnet that will be used within the template(OutsideNet, InsideNet, DBNet).  
 ```json
