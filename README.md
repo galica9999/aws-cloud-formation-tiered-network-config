@@ -319,5 +319,40 @@ We will be going over the 7 resources that we are creating in this master templa
 * webLaunchConfig
 * WebAsgLb
 
-We will go over each one of these resources and then each resource will have their own section.
+We will go over each of these resources as they are defined in the master template and then each resource will have their own section.
+
+#### networkSetup
+<details>
+      <summary>Drop Down</summary><p>
+This resource calls out to the networkSetup template and passes down parameters for the template to use. The creation of the resources is handled within that template itself.
+      
+```json
+"networkSetup": {
+      "Type": "AWS::CloudFormation::Stack",
+      "Properties": {
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/1-network-setup.json",
+        "Parameters": {
+          "CidrBlock": { "Ref": "CidrBlock" },
+          "AvailabilityZone1": { "Ref": "AvailabilityZone1" },
+          "AvailabilityZone2": { "Ref": "AvailabilityZone2" },
+          "OutsideNetA": { "Ref": "OutsideNetA" },
+          "OutsideNetB": { "Ref": "OutsideNetB" },
+          "InsideNetA": { "Ref": "InsideNetA" },
+          "InsideNetB": { "Ref": "InsideNetB" },
+          "DBNetA": { "Ref": "DBNetA" }
+        }
+      }
+    }
+```
+
+* **Type** - The type is of an AWS resource.  This specific type of CloudFOrmation::Stack is what tells Cloudformation to look for another template and pass the parameters down to that template.
+* **Properties** - It defines what will be called for the template and holds the parameters to be passed down. These properties will generally only have two sections: TemplateURL and Parameters.  
+      * **TemplateURL** - This is URL location of the template we want to call.  It can be a github link or anything else that is publicly accesible.  But generally we host them in AWS S3 buckets.  If it is in a buvket, we do not need to make the file public.  
+      * **Parameters** - This holds the values of what will be sent to the template to be used for resource creation.  
+            * **{"Ref":"CidrBlock"}** - This field works the same way as the parameters for the masterTemplate. For each of the parameters, we are using a reference assignment.  Ths means we are pulling the value that was input into the parameter field called CidrBlock.  It works the same way for the other parameters we create a reference for.
+
+The parameters that are being defined in this resource need to be the same name as what is defined in the separate template file too. This is how the parameters get passed to the nested template.  
+
+</p>
+</details>
 
