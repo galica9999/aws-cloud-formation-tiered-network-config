@@ -38,11 +38,28 @@ Each number for each file is the step at which they take place in the master tem
 # Master Template Overview
 The master template has three main sections in it.  
 1. Description
-2. Parameters
-3. Resources
+2. Mappings
+3. Parameters
+4. Resources
 
 ## Description
 The description is a blurb of what the template is for so that anyone reading it will be able to tell its use.
+
+## Mappings
+Mappings are used to define what resource should be used in which region of AWS.  For example: an AWS VM(AMI) will have separate IDs depending on the region it is in.  We can use the mappings to say "use this AMI if in us-east-1, or use this AMI if in ap-northeast-1". 
+
+For each region we define, we want to specify the virtulization type and the AMI ID.  The virtualization type is generally decided by what the AMI was created for, but sometimes you can multiple types for one AMI.  This is why we have to specify which type we want to look for.
+```json
+"Mappings": {
+    "RegionMap": {
+      "us-east-1": { "HVM": "ami-00e87074e52e6c9f9" },
+      "us-west-1": { "HVM": "ami-0bdb828fd58c52235" },
+      "eu-west-1": { "HVM": "ami-08d2d8b00f270d03b" },
+      "ap-southeast-1": { "HVM": "ami-0adfdaea54d40922b" },
+      "ap-northeast-1": { "HVM": "ami-0ddea5e0f69c193a4" }
+    }
+  }
+```
 
 ## Parameters
 The parameters are values that are to be passed into the template when it is run in CloudFormation. Parameters can be a name for S3 Bucket (file storage) or a cidr block for a subnet and many other things can be passed into it.  Parameters look like so within the file:
@@ -425,7 +442,7 @@ This resource calls out to the stealthwatch template and passes down parameters 
 #### appLaunchConfig
 <details>
       <summary>Drop Down</summary><p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+This resource calls out to the application launch config template and passes down parameters for the template to use. 
       
 ```json
 "appLaunchConfig": {
@@ -458,6 +475,8 @@ This resource calls out to the networkSetup template and passes down parameters 
       }
     }
 ```
+
+* **Fn::FindInMap** - This function is used to search a map defined in the mappings section of the template.  We can have multiple mappings in the mapping section but for our template we only needed one for determining which AMIs to use for each region.  In this example we are searching the *RegionMap* for the region we are in, which is defined by the AWS::Region field, and then saying to grab the virtualization type of HVM for that AMI ID.
 
 </p>
 </details>
