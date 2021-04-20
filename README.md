@@ -48,7 +48,7 @@ The description is a blurb of what the template is for so that anyone reading it
 ## Mappings
 Mappings are used to define what resource should be used in which region of AWS.  For example: an AWS VM(AMI) will have separate IDs depending on the region it is in.  We can use the mappings to say "use this AMI if in us-east-1, or use this AMI if in ap-northeast-1". 
 
-For each region we define, we want to specify the virtulization type and the AMI ID.  The virtualization type is generally decided by what the AMI was created for, but sometimes you can multiple types for one AMI.  This is why we have to specify which type we want to look for.
+For each region we define, we want to specify the virtulization type and the AMI ID.  The virtualization type is generally decided by what the AMI was created for, but sometimes you can have multiple types for one AMI.  This is why we have to specify which type we want to look for.
 ```json
 "Mappings": {
     "RegionMap": {
