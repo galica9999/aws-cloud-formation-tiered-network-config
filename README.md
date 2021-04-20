@@ -426,6 +426,7 @@ This resource calls out to the stealthwatch template and passes down parameters 
 <details>
       <summary>Drop Down</summary><p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+      
 ```json
 "appLaunchConfig": {
       "Type": "AWS::CloudFormation::Stack",
