@@ -427,7 +427,35 @@ This resource calls out to the stealthwatch template and passes down parameters 
       <summary>Drop Down</summary><p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
 ```json
-
+"appLaunchConfig": {
+      "Type": "AWS::CloudFormation::Stack",
+      "DependsOn": ["DBSetup"],
+      "Properties": {
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/3-app-launch-configs.json",
+        "Parameters": {
+          "AppAMItype": { "Ref": "AppAMItype" },
+          "AppAMI": {
+            "Fn::FindInMap": ["RegionMap", { "Ref": "AWS::Region" }, "HVM"]
+          },
+          "appKeyName": { "Ref": "appKeyName" },
+          "appCloudformationSG": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.appSG"]
+          },
+          "webCloudformationSG": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.webSG"]
+          },
+          "DB": {
+            "Fn::GetAtt": ["DBSetup", "Outputs.dbEndpoint"]
+          },
+          "DBPassword": {
+            "Ref": "DBPassword"
+          },
+          "DBUsername": {
+            "Ref": "DBUsername"
+          }
+        }
+      }
+    }
 ```
 
 </p>
@@ -439,7 +467,36 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use.
       
 ```json
-
+"AppAsgLb": {
+      "Type": "AWS::CloudFormation::Stack",
+      "DependsOn": ["appLaunchConfig"],
+      "Properties": {
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/4-app-asg-lb.json",
+        "Parameters": {
+          "appLaunchConfig": {
+            "Fn::GetAtt": ["appLaunchConfig", "Outputs.appLaunchConfig"]
+          },
+          "insideCloudformationSubnetA": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.insideSubnetA"]
+          },
+          "insideCloudformationSubnetB": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.insideSubnetB"]
+          },
+          "cloudformationVPC": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.StackVPC"]
+          },
+          "appCloudformationSG": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.appSG"]
+          },
+          "webCloudformationSG": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.webSG"]
+          },
+          "appLaunchConfigVersion": {
+            "Fn::GetAtt": ["appLaunchConfig", "Outputs.appLaunchConfigVersion"]
+          }
+        }
+      }
+    }
 ```
 
 </p>
@@ -451,7 +508,32 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"webLaunchConfig": {
+      "Type": "AWS::CloudFormation::Stack",
+      "DependsOn": ["AppAsgLb"],
+      "Properties": {
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/5-web-launch-configs.json",
+        "Parameters": {
+          "route53DNS": {
+            "Ref": "route53DNS"
+          },
+          "WebAMItype": { "Ref": "WebAMItype" },
+          "webAMI": {
+            "Fn::FindInMap": ["RegionMap", { "Ref": "AWS::Region" }, "HVM"]
+          },
+          "webKeyName": { "Ref": "webKeyName" },
+          "appCloudformationSG": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.appSG"]
+          },
+          "webCloudformationSG": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.webSG"]
+          },
+          "appALBDNS": {
+            "Fn::GetAtt": ["AppAsgLb", "Outputs.appLoadBalancerDNS"]
+          }
+        }
+      }
+    }
 ```
 
 </p>
@@ -463,7 +545,36 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"WebAsgLb": {
+      "Type": "AWS::CloudFormation::Stack",
+      "DependsOn": ["webLaunchConfig"],
+      "Properties": {
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/6-web-asg-lb.json",
+        "Parameters": {
+          "webLaunchConfig": {
+            "Fn::GetAtt": ["webLaunchConfig", "Outputs.webLaunchConfig"]
+          },
+          "outsideCloudformationSubnetA": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.outsideSubnetA"]
+          },
+          "outsideCloudformationSubnetB": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.outsideSubnetB"]
+          },
+          "cloudformationVPC": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.StackVPC"]
+          },
+          "appCloudformationSG": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.appSG"]
+          },
+          "webCloudformationSG": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.webSG"]
+          },
+          "webLaunchConfigVersion": {
+            "Fn::GetAtt": ["webLaunchConfig", "Outputs.webLaunchConfigVersion"]
+          }
+        }
+      }
+    }
 ```
 
 </p>
