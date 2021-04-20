@@ -319,12 +319,12 @@ We will be going over the 7 resources that we are creating in this master templa
 * webLaunchConfig
 * WebAsgLb
 
-We will go over each of these resources as they are defined in the master template and then each resource will have their own section.
+We will go over each of these resources as they are defined in the master template and then each resource will have their own section. Most of these won;t too different from the masterTemplate, so we will only go over the if anything is different and how some of the functions are being used.
 
 #### networkSetup
 <details>
       <summary>Drop Down</summary><p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. The creation of the resources is handled within that template itself.
+This resource calls out to the networkSetup template and passes down parameters for the template to use. Then the nested template will create everything related to the base network.
       
 ```json
 "networkSetup": {
@@ -345,14 +345,125 @@ This resource calls out to the networkSetup template and passes down parameters 
     }
 ```
 
-* **Type** - The type is of an AWS resource.  This specific type of CloudFOrmation::Stack is what tells Cloudformation to look for another template and pass the parameters down to that template.
+* **Type** - The type is of an AWS resource.  This specific type of CloudFOrmation::Stack is what tells Cloudformation to look for another template and pass the parameters down to that template. 
 * **Properties** - It defines what will be called for the template and holds the parameters to be passed down. These properties will generally only have two sections: TemplateURL and Parameters.  
       * **TemplateURL** - This is URL location of the template we want to call.  It can be a github link or anything else that is publicly accesible.  But generally we host them in AWS S3 buckets.  If it is in a buvket, we do not need to make the file public.  
       * **Parameters** - This holds the values of what will be sent to the template to be used for resource creation.  This field works the same way as the parameters for the masterTemplate.
-          * **{"Ref":"CidrBlock"}** -  For each of the parameters, we are using a reference assignment. Ths means we are pulling the value that was input into the parameter field called CidrBlock.  It works the same way for the other parameters we create a reference for.
-
-The parameters that are being defined in this resource need to be the same name as what is defined in the separate template file too. This is how the parameters get passed to the nested template.  
+          * **{"Ref":"nameOfResource"}** -  For each of the parameters, we are using a reference assignment. Ths means we are pulling the value that was input into the parameter field called CidrBlock.  It works the same way for the other parameters we create a reference for.
 
 </p>
 </details>
 
+#### DBSetup
+<details>
+      <summary>Drop Down</summary><p>
+This resource calls out to the DBSetup template and passes down parameters for the template to use. The nested template will then setup the database.
+      
+```json
+"DBSetup": {
+      "Type": "AWS::CloudFormation::Stack",
+      "DependsOn": ["networkSetup"],
+      "Properties": {
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/2-db-setup.json",
+        "Parameters": {
+          "DBInstanceID": { "Ref": "DBInstanceID" },
+          "DBName": { "Ref": "DBName" },
+          "DBInstanceClass": { "Ref": "DBInstanceClass" },
+          "DBAllocatedStorage": { "Ref": "DBAllocatedStorage" },
+          "DBUsername": { "Ref": "DBUsername" },
+          "DBPassword": { "Ref": "DBPassword" },
+          "dbCloudformationSG": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.dbSG"]
+          },
+          "DBCloudformationSubnetA": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.dbSubnetA"]
+          },
+          "DBCloudformationSubnetB": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.dbSubnetB"]
+          }
+        }
+      }
+    }
+```
+
+* **DependsOn** - This field is used to make sure one resource isn't created until another is finished.  In this case, the DBSetup is going to wait for the NetworkSetup to complete and then it will start.  This field, can take either one input that does not need to be in a list, or it can take multiple inputs if it needs to wait on multiple resources to finish up.
+* **{"Fn::GetAtt":["nameOfResource","Outputs.nameOfOutput"]}** -  The Fn::GetAtt is used to get attributes of a resource.  For the dbCoudformationSG and subnets, we need to get a resource that was created in another template.  To do that we define thigs called *Outputs* (we will go over outputs in more detail inn the nested template section).  Those outputs have a name we define and we are able to use them by usinng the Fn:GetAtt function.  The function takes a list with two attributes.  The first is the resource you want to look at, in this case it is networkSetup, and the second is the output we want.  Then these attributes are passed down to the nest template beinng called in this resource.
+
+</p>
+</details>
+
+#### SWCSetup
+<details>
+      <summary>Drop Down</summary><p>
+This resource calls out to the stealthwatch template and passes down parameters for the template to use. 
+      
+```json
+"SWCSetup": {
+      "Type": "AWS::CloudFormation::Stack",
+      "DependsOn": ["networkSetup"],
+      "Properties": {
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/2-swc-setup.json",
+        "Parameters": {
+          "VPCID": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.StackVPC"]
+          },
+          "S3BucketName": {
+            "Ref": "S3BucketName"
+          },
+          "ExternalID": {
+            "Ref": "ExternalID"
+          }
+        }
+      }
+    }
+```
+
+</p>
+</details>
+
+#### appLaunchConfig
+<details>
+      <summary>Drop Down</summary><p>
+This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+```json
+
+```
+
+</p>
+</details>
+
+#### AppAsgLb
+<details>
+      <summary>Drop Down</summary><p>
+This resource calls out to the networkSetup template and passes down parameters for the template to use.
+      
+```json
+
+```
+
+</p>
+</details>
+
+#### webLaunchConfig
+<details>
+      <summary>Drop Down</summary><p>
+This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+      
+```json
+
+```
+
+</p>
+</details>
+
+#### WebAsgLb
+<details>
+      <summary>Drop Down</summary><p>
+This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+      
+```json
+
+```
+
+</p>
+</details>
