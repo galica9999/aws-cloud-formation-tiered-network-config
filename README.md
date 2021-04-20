@@ -349,7 +349,7 @@ This resource calls out to the networkSetup template and passes down parameters 
 * **Properties** - It defines what will be called for the template and holds the parameters to be passed down. These properties will generally only have two sections: TemplateURL and Parameters.  
       * **TemplateURL** - This is URL location of the template we want to call.  It can be a github link or anything else that is publicly accesible.  But generally we host them in AWS S3 buckets.  If it is in a buvket, we do not need to make the file public.  
       * **Parameters** - This holds the values of what will be sent to the template to be used for resource creation.  This field works the same way as the parameters for the masterTemplate.
-            * **{"Ref":"nameOfResource"}** -  For each of the parameters, we are using a reference assignment. Ths means we are pulling the value that was input into the parameter field called CidrBlock.  It works the same way for the other parameters we create a reference for.
+      * **{"Ref":"nameOfResource"}** -  For each of the parameters, we are using a reference assignment. Ths means we are pulling the value that was input into the parameter field called CidrBlock.  It works the same way for the other parameters we create a reference for.
 
 </p>
 </details>
