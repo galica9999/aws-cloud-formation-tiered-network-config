@@ -1128,38 +1128,474 @@ This resource creates the actual database we will use.
 <details><summary><h2 style="display:inline">2-swc-setup</h2></summary>
 <p>
 
+<details><summary><h4 style="display:inline">S3Bucket</h4></summary>
+<p>
+
 ```json
+"S3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "BucketName": {
+          "Ref": "S3BucketName"
+        }
+      }
+    }
 
 ```
+
+</p>
+</details>
+
+<details><summary><h4 style="display:inline">VPCFlowLogDeliveryToS3</h4></summary>
+<p>
+
+```json
+"VPCFlowLogDeliveryToS3": {
+      "Type": "AWS::EC2::FlowLog",
+      "Properties": {
+        "ResourceId": {
+          "Ref": "VPCID"
+        },
+        "ResourceType": "VPC",
+        "TrafficType": "ALL",
+        "LogDestination": {
+          "Fn::GetAtt": ["S3Bucket", "Arn"]
+        },
+        "LogDestinationType": "s3",
+        "LogFormat": "${version} ${account-id} ${interface-id} ${srcaddr} ${dstaddr} ${srcport} ${dstport} ${protocol} ${packets} ${bytes} ${start} ${end} ${action} ${log-status} ${vpc-id} ${subnet-id} ${instance-id} ${tcp-flags} ${type} ${pkt-srcaddr} ${pkt-dstaddr}",
+        "MaxAggregationInterval": 60
+      }
+    }
+
+```
+
+</p>
+</details>
+
+<details><summary><h4 style="display:inline">ObservableRole</h4></summary>
+<p>
+
+```json
+"ObservableRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": { "Fn::Sub": "${AWS::StackName}-observble_role" },
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "sts:ExternalId": {
+                    "Ref": "ExternalID"
+                  }
+                }
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::############:role/userToUse"
+              }
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    }
+
+```
+
+- **Principal** - This is what we use to give permissions to the role as the AWS user we specify.
+
+</p>
+</details>
+
+<details><summary><h4 style="display:inline">ObservablePolicy</h4></summary>
+<p>
+
+```json
+"ObservablePolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": { "Fn::Sub": "${AWS::StackName}-Obsrvble_policy" },
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "autoscaling:Describe*",
+                "cloudtrail:LookupEvents",
+                "cloudwatch:Get*",
+                "cloudwatch:List*",
+                "ec2:Describe*",
+                "elasticache:Describe*",
+                "elasticache:List*",
+                "elasticloadbalancing:Describe*",
+                "guardduty:Get*",
+                "guardduty:List*",
+                "iam:Get*",
+                "iam:List*",
+                "inspector:*",
+                "rds:Describe*",
+                "rds:List*",
+                "redshift:Describe*",
+                "workspaces:Describe*",
+                "route53:List*",
+                "logs:Describe*",
+                "logs:GetLogEvents",
+                "logs:FilterLogEvents",
+                "logs:PutSubscriptionFilter",
+                "logs:DeleteSubscriptionFilter"
+              ],
+              "Resource": "*"
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "ObservableRole"
+          }
+        ]
+      }
+    }
+
+```
+
+</p>
+</details>
+
+<details><summary><h4 style="display:inline">Observables3Policy</h4></summary>
+<p>
+
+```json
+"Observables3Policy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": { "Fn::Sub": "${AWS::StackName}-Obsrvble_s3policy" },
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": ["s3:ListBucket", "s3:GetBucketLocation"],
+              "Resource": {
+                "Fn::GetAtt": ["S3Bucket", "Arn"]
+              }
+            },
+            {
+              "Effect": "Allow",
+              "Action": ["s3:GetObject"],
+              "Resource": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    {
+                      "Fn::GetAtt": ["S3Bucket", "Arn"]
+                    },
+                    "*"
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "ObservableRole"
+          }
+        ]
+      }
+    }
+  }
+
+```
+
+</p>
+</details>
 
 </p>
 </details>
 
 <details><summary><h2 style="display:inline">3-app-launch-configs</h2></summary>
 <p>
+The app launch configuration is the configuration that will be used when new AMIs are created.  It contains what it will do on startup and all of the information we need to create an AMI wihtout doing the actual creation itself. We then output the application launch config to be used in other templates.
 
+<details><summary><h4 style="display:inline">appLaunchConfig</h4></summary>
+<p>
+This resource creates the launch configuration we will use for the application AMIs.
+      
 ```json
-
+"appLaunchConfig": {
+      "Type": "AWS::EC2::LaunchTemplate",
+      "Properties": {
+        "LaunchTemplateData": {
+          "ImageId": { "Ref": "AppAMI" },
+          "InstanceType": { "Ref": "AppAMItype" },
+          "KeyName": { "Ref": "appKeyName" },
+          "SecurityGroupIds": [{ "Ref": "appCloudformationSG" }],
+          "UserData": {
+            "Fn::Base64": {
+              "Fn::Join": [
+                "",
+                [
+                  "#!/bin/bash\n",
+                  "sudo yum install -y epel-release yum-utils\n",
+                  "sudo yum install -y http://rpms.remirepo.net/enterprise/remi-release-7.rpm\n",
+                  "sudo yum-config-manager --enable remi-php73\n",
+                  "sudo yum install -y php php-common php-opcache php-mcrypt php-cli php-gd php-curl php-mysqlnd\n",
+                  "sudo yum install -y wget\n",
+                  "sudo yum install -y unzip\n",
+                  "sudo yum install -y lsof\n",
+                  "sudo yum install -y httpd\n",
+                  "sudo yum install -y ipset\n",
+                  "sudo systemctl start httpd\n",
+                  "sudo systemctl enable httpd\n",
+                  "sudo setsebool -P httpd_can_network_connect 1\n",
+                  "sudo wget https://wordpress.org/latest.tar.gz\n",
+                  "tar -xzf latest.tar.gz\n",
+                  "cd wordpress\n",
+                  "sudo  wget https://safeapplabfiles.s3.amazonaws.com/wp-config.php\n",
+                  "sudo sed -i -E 's/admintochange/",
+                  { "Ref": "DBUsername" },
+                  "/g' ./wp-config.php\n",
+                  "sudo sed -i -E 's/PASSWORDTOCHANGE/",
+                  { "Ref": "DBPassword" },
+                  "/g' ./wp-config.php\n",
+                  "sudo sed -i -E 's/dbname.region.rds.amazonaws.com/",
+                  { "Ref": "DB" },
+                  "/g' ./wp-config.php\n",
+                  "sudo rsync -avP * /var/www/html/\n",
+                  "sudo chown -R apache:apache /var/www/html/*\n",
+                  "sudo systemctl restart httpd\n"
+                ]
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+    
 ```
+
+- **ImageId** - This field is used to tell what image will be used to create the AMI.
+- **InstanceType** - This field is used to determine the resources the instance will have to use. t2.mirco, etc...
+- **KeyName** - This is used to define what key will be used to ssh into the device should we need to do so.
+- **SecurityGroupIds** - This is used to attach the instance to certain security groups. In this case we are attaching them to the interal application security groups.
+- **UserData** - This field is used to pass script the instance will run after it has come up. For us, we are installinng packages and replacing configuration file lines in it.
+- **Fn::Base64** - The script needs to be encoded in base 64 to work, so we are explicitly telling it to convert it to base 64 using this function.
+- **Fn::Join** - This function takes a list of two arguments. The first is the delimiter on how the second argument should be built. The second argument is a list of what you want to do. The first agument for us is a empty strinng, this means that after each comma in the second argument it will join the arguments with nothing in between them. We could add comma in between the quotes and it will make a large line with commas in between each item in the list.
+
+</p>
+</details>
 
 </p>
 </details>
 
 <details><summary><h2 style="display:inline">4-app-asg-lb</h2></summary>
 <p>
+The app-asg-lb template is used to create the auto scaling group and load balancer for the application AMIs. After they have been created, we output the loadbalancer DNS name, and the autoscaling group.
 
+<details><summary><h4 style="display:inline">appASG</h4></summary>
+<p>
+This resource creates the launch configuration we will use for the application AMIs.
+      
 ```json
-
+"appASG": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "TargetGroupARNs": [{ "Ref": "appTargetGroup" }],
+        "MinSize": "1",
+        "MaxSize": "2",
+        "DesiredCapacity": "1",
+        "LaunchTemplate": {
+          "LaunchTemplateId": {
+            "Ref": "appLaunchConfig"
+          },
+          "Version": { "Ref": "appLaunchConfigVersion" }
+        },
+        "VPCZoneIdentifier": [
+          { "Ref": "insideCloudformationSubnetA" },
+          { "Ref": "insideCloudformationSubnetB" }
+        ]
+      }
+    }
+    
 ```
+
+- **ImageId** - This field is used to tell what image will be used to create the AMI.
+
+</p>
+</details>
+
+<details><summary><h4 style="display:inline">appLoadBalancer</h4></summary>
+<p>
+This resource creates the launch configuration we will use for the application AMIs.
+      
+```json
+"appLoadBalancer": {
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "Scheme": "internal",
+        "IpAddressType": "ipv4",
+        "Name": "appLoadBalancer",
+        "Type": "application",
+        "SecurityGroups": [{ "Ref": "appCloudformationSG" }],
+        "Subnets": [
+          { "Ref": "insideCloudformationSubnetA" },
+          { "Ref": "insideCloudformationSubnetB" }
+        ]
+      }
+    }
+    
+```
+
+- **ImageId** - This field is used to tell what image will be used to create the AMI.
+
+</p>
+</details>
+
+<details><summary><h4 style="display:inline">appTargetGroup</h4></summary>
+<p>
+This resource creates the launch configuration we will use for the application AMIs.
+      
+```json
+"appTargetGroup": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "HealthCheckEnabled": true,
+        "HealthCheckPath": "/",
+        "HealthCheckPort": "80",
+        "HealthCheckProtocol": "HTTP",
+        "HealthCheckTimeoutSeconds": 3,
+        "HealthyThresholdCount": 3,
+        "Matcher": {
+          "HttpCode": "200-399"
+        },
+        "Name": "appTargetGroup",
+        "Port": 80,
+        "Protocol": "HTTP",
+        "TargetType": "instance",
+        "UnhealthyThresholdCount": 10,
+        "VpcId": { "Ref": "cloudformationVPC" }
+      }
+    }
+    
+```
+
+- **ImageId** - This field is used to tell what image will be used to create the AMI.
+
+</p>
+</details>
+
+<details><summary><h4 style="display:inline">HTTPListenerRule</h4></summary>
+<p>
+This resource creates the launch configuration we will use for the application AMIs.
+      
+```json
+"HTTPListenerRule": {
+      "Type": "AWS::ElasticLoadBalancingV2::ListenerRule",
+      "Properties": {
+        "Actions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": { "Ref": "appTargetGroup" }
+          }
+        ],
+        "Conditions": [
+          {
+            "Field": "source-ip",
+            "SourceIpConfig": { "Values": ["0.0.0.0/0"] }
+          }
+        ],
+        "ListenerArn": { "Ref": "HTTPlistener" },
+        "Priority": 1
+      }
+    }
+    
+```
+
+- **ImageId** - This field is used to tell what image will be used to create the AMI.
+
+</p>
+</details>
+
+<details><summary><h4 style="display:inline">HTTPListener</h4></summary>
+<p>
+This resource creates the launch configuration we will use for the application AMIs.
+      
+```json
+"HTTPlistener": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": { "Ref": "appTargetGroup" }
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "appLoadBalancer"
+        },
+        "Port": 80,
+        "Protocol": "HTTP"
+      }
+    }
+  }
+    
+```
+
+- **ImageId** - This field is used to tell what image will be used to create the AMI.
+
+</p>
+</details>
 
 </p>
 </details>
 
 <details><summary><h2 style="display:inline">5-web-launch-configs</h2></summary>
 <p>
+The web launch config serves a similar purpose as the application launch config but with a few differences in the security group and user data script.
 
 ```json
-
+"webLaunchConfig": {
+      "Type": "AWS::EC2::LaunchTemplate",
+      "Properties": {
+        "LaunchTemplateData": {
+          "ImageId": { "Ref": "webAMI" },
+          "InstanceType": { "Ref": "WebAMItype" },
+          "KeyName": { "Ref": "webKeyName" },
+          "SecurityGroupIds": [{ "Ref": "webCloudformationSG" }],
+          "UserData": {
+            "Fn::Base64": {
+              "Fn::Join": [
+                "",
+                [
+                  "#!/bin/bash\n",
+                  "sudo yum install -y epel-release\n",
+                  "sudo yum install -y nginx\n",
+                  "sudo yum install -y wget\n",
+                  "sudo yum install -y unzip\n",
+                  "sudo yum install -y lsof\n",
+                  "sudo yum install -y ipset\n",
+                  "cd /etc/nginx\n",
+                  "sudo mv nginx.conf nginx.conf.backup\n",
+                  "sudo wget https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/nginx.conf\n",
+                  "sudo sed -i -E 's/INTERLANLB/",
+                  { "Ref": "appALBDNS" },
+                  "/g' nginx.conf\n",
+                  "sudo systemctl restart nginx\n",
+                  "sudo systemctl enable nginx\n"
+                ]
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
 ```
 
 </p>
@@ -1168,9 +1604,144 @@ This resource creates the actual database we will use.
 <details><summary><h2 style="display:inline">6-web-asg-lb</h2></summary>
 <p>
 
+<details><summary><h4 style="display:inline">webASG</h4></summary>
+<p>
+
 ```json
+"webASG": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "TargetGroupARNs": [{ "Ref": "webTargetGroup" }],
+        "MinSize": "1",
+        "MaxSize": "2",
+        "DesiredCapacity": "1",
+        "LaunchTemplate": {
+          "LaunchTemplateId": {
+            "Ref": "webLaunchConfig"
+          },
+          "Version": { "Ref": "webLaunchConfigVersion" }
+        },
+        "VPCZoneIdentifier": [
+          { "Ref": "outsideCloudformationSubnetA" },
+          { "Ref": "outsideCloudformationSubnetB" }
+        ]
+      }
+    }
 
 ```
+
+</p>
+</details>
+
+<details><summary><h4 style="display:inline">webLoadBalancer</h4></summary>
+<p>
+
+```json
+"webLoadBalancer": {
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "Scheme": "internet-facing",
+        "IpAddressType": "ipv4",
+        "Name": "webLoadBalancer",
+        "Type": "application",
+        "SecurityGroups": [{ "Ref": "webCloudformationSG" }],
+        "Subnets": [
+          { "Ref": "outsideCloudformationSubnetA" },
+          { "Ref": "outsideCloudformationSubnetB" }
+        ]
+      }
+    }
+
+```
+
+</p>
+</details>
+
+<details><summary><h4 style="display:inline">webTargetGroup</h4></summary>
+<p>
+
+```json
+"webTargetGroup": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "HealthCheckEnabled": true,
+        "HealthCheckPath": "/",
+        "HealthCheckPort": "80",
+        "HealthCheckProtocol": "HTTP",
+        "HealthCheckTimeoutSeconds": 3,
+        "HealthyThresholdCount": 3,
+        "Matcher": {
+          "HttpCode": "200-399"
+        },
+        "Name": "webTargetGroup",
+        "Port": 80,
+        "Protocol": "HTTP",
+        "TargetType": "instance",
+        "UnhealthyThresholdCount": 10,
+        "VpcId": { "Ref": "cloudformationVPC" }
+      }
+    }
+
+```
+
+</p>
+</details>
+
+<details><summary><h4 style="display:inline">HTTPListenerRule</h4></summary>
+<p>
+
+```json
+"HTTPListenerRule": {
+      "Type": "AWS::ElasticLoadBalancingV2::ListenerRule",
+      "Properties": {
+        "Actions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": { "Ref": "webTargetGroup" }
+          }
+        ],
+        "Conditions": [
+          {
+            "Field": "source-ip",
+            "SourceIpConfig": { "Values": ["0.0.0.0/0"] }
+          }
+        ],
+        "ListenerArn": { "Ref": "HTTPlistener" },
+        "Priority": 1
+      }
+    }
+
+```
+
+</p>
+</details>
+
+<details><summary><h4 style="display:inline">HTTPlistener</h4></summary>
+<p>
+
+```json
+"HTTPlistener": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": { "Ref": "webTargetGroup" }
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "webLoadBalancer"
+        },
+        "Port": 80,
+        "Protocol": "HTTP"
+      }
+    }
+  }
+
+```
+
+</p>
+</details>
 
 </p>
 </details>
