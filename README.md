@@ -101,11 +101,9 @@ We will go over these parameters since most of them are repeated with different 
 
 Within each parameter we go over, we will put the parameter in a code block and break it down. For the AMI type parameters, we will shorten them because they are very large.
 
-#### CidrBlock
-
-<details>
-      <summary>Drop Down</summary>
-<p>CidrBlock is used to define the subnet to be used for the VPC being created.  It is repeated for each smaller subnet that will be used within the template(OutsideNet, InsideNet, DBNet). 
+<details><summary><h4 style="display:inline">CidrBlock</h4></summary>
+<p>
+CidrBlock is used to define the subnet to be used for the VPC being created.  It is repeated for each smaller subnet that will be used within the template(OutsideNet, InsideNet, DBNet). 
       
 ```json
 "CidrBlock": {
@@ -128,10 +126,8 @@ Since we have gone over AllowedPattern, Default, and Description we will not go 
 </p>
 </details>
 
-#### DBInstanceID
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">DBInstanceID</h4></summary>
+<p>
 This field is used to name the identifier when it is created. The identifier is used as the true name of the database when referncing it.
       
 ```json
@@ -152,10 +148,8 @@ This field is used to name the identifier when it is created. The identifier is 
 </p>
 </details>
 
-#### DBName
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">DBName</h4></summary>
+<p>
 This field is used to name the database.  Its used as an easy to find name for us to use.
       
 ```json
@@ -173,10 +167,8 @@ This field is used to name the database.  Its used as an easy to find name for u
 </p>
 </details>
 
-#### DBInstanceClass
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">DBInstanceClass</h4></summary>
+<p>
 This field is used to determine the class type to be used.  This determine show much ram and cpu it will have on hand.
       
 ```json
@@ -191,10 +183,8 @@ This field is used to determine the class type to be used.  This determine show 
 </p>
 </details>
 
-#### DBAllocatedStorage
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">DBAllocatedStorage</h4></summary>
+<p>
 This field will be used to determine the size of the database.
       
 ```json
@@ -212,10 +202,8 @@ This field will be used to determine the size of the database.
 </p>
 </details>
 
-#### DBUsername
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">DBUsername</h4></summary>
+<p>
 This field is to name the user that will be used to access the database.
       
 ```json
@@ -232,10 +220,8 @@ This field is to name the user that will be used to access the database.
 </p>
 </details>
 
-#### DBPassword
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">DBPassword</h4></summary>
+<p>
 This field is used to create a password for the database user being created.
       
 ```javascript
@@ -254,10 +240,8 @@ This field is used to create a password for the database user being created.
 </p>
 </details>
 
-#### AppAMItype
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">AppAMItype</h4></summary>
+<p>
 This field is used to determine the AMI type.  It determines how much ram and cpu is allocated to it.  
       
 ```javascript
@@ -281,10 +265,8 @@ This field is used to determine the AMI type.  It determines how much ram and cp
 </p>
 </details>
 
-#### appKeyName
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">appKeyName</h4></summary>
+<p>
 This field allows us to select a keypair that will be used to ssh into the AMIs after they have been created.
       
 ```json
@@ -298,10 +280,8 @@ This field allows us to select a keypair that will be used to ssh into the AMIs 
 </p>
 </details>
 
-#### S3BucketName
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">S3BucketName</h4></summary>
+<p>
 This field allows us to name our S3 bucket that will be used to store our logs.
       
 ```json
@@ -315,10 +295,8 @@ This field allows us to name our S3 bucket that will be used to store our logs.
 </p>
 </details>
 
-#### ExternalID
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">ExternalID</h4></summary>
+<p>
 This field lets us input the external ID used to connect Stealth Watch to our VPC.
       
 ```json
@@ -331,10 +309,8 @@ This field lets us input the external ID used to connect Stealth Watch to our VP
 </p>
 </details>
 
-#### AvailabilityZone1
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">AvailabilityZone1</h4></summary>
+<p>
 This field allows us to choose the availability zone to be used for each subnet.
       
 ```json
@@ -364,10 +340,8 @@ We will be going over the 7 resources that we are creating in this master templa
 
 We will go over each of these resources as they are defined in the master template and then each resource will have their own section. Most of these won;t too different from the masterTemplate, so we will only go over the if anything is different and how some of the functions are being used.
 
-#### networkSetup
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. Then the nested template will create everything related to the base network.
       
 ```json
@@ -397,10 +371,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-#### DBSetup
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">DBSetup</h4></summary>
+<p>
 This resource calls out to the DBSetup template and passes down parameters for the template to use. The nested template will then setup the database.
       
 ```json
@@ -436,10 +408,8 @@ This resource calls out to the DBSetup template and passes down parameters for t
 </p>
 </details>
 
-#### SWCSetup
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">SWCSetup</h4></summary>
+<p>
 This resource calls out to the stealthwatch template and passes down parameters for the template to use. 
       
 ```json
@@ -466,10 +436,8 @@ This resource calls out to the stealthwatch template and passes down parameters 
 </p>
 </details>
 
-#### appLaunchConfig
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">appLaunchConfig</h4></summary>
+<p>
 This resource calls out to the application launch config template and passes down parameters for the template to use. 
       
 ```json
@@ -509,10 +477,8 @@ This resource calls out to the application launch config template and passes dow
 </p>
 </details>
 
-#### AppAsgLb
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">AppAsgLb</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use.
       
 ```json
@@ -551,11 +517,9 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-#### webLaunchConfig
-
-<details>
-      <summary>Drop Down</summary><p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+<details><summary><h4 style="display:inline">webLaunchConfig</h4></summary>
+<p>
+This resource calls out to the web launch config template for those to be created.
       
 ```json
 "webLaunchConfig": {
@@ -589,11 +553,9 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-#### WebAsgLb
-
-<details>
-      <summary>Drop Down</summary><p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+<details><summary><h4 style="display:inline">WebAsgLb</h4></summary>
+<p>
+This resource calls out to the web autoscaling group and load balancer template for those to be created.
       
 ```json
 "WebAsgLb": {
@@ -647,7 +609,7 @@ We will go over each file in the order that they are called:
 
 <!-- ## 1-network-setup -->
 
-<details><summary><h1 style="display:inline-block">1-network-setup</h1></summary>
+<details><summary><h2 style="display:inline">1-network-setup</h2></summary>
 <p>
 The network setup template is the first template we need to create our architecture and is the longest file of them all.  It is the template that will be used to create the VPC, subnets, gateways, routes, and security groups. In this template, the parameters section replciates what is already in the masterTemplate.  This allows us to use the teamplate by itself without the masterTemplate to call it. We will focus on the resources section and output section here.
     
@@ -658,8 +620,8 @@ We will break up the file into more readable chunks for each section and resourc
 ### Resources
 
 <!-- #### VPC -->
-<details>
-      <summary><strong>VPC</strong></summary><p>
+<details><summary><h4 style="display:inline">VPC</h4></summary>
+<p>
 This resource creates the VPC our architecture will live in. 
       
 ```json
@@ -689,8 +651,8 @@ This resource creates the VPC our architecture will live in.
 
 <!-- #### outsideSubnetA -->
 
-<details>
-      <summary><strong>outsideSubnetA</strong></summary><p>
+<details><summary><h4 style="display:inline">outsideSubnetA</h4></summary>
+<p>
 This resource creates one of the outside subnets we are using in the VPC.  This process is the same for the inside subnets and DB subnets.  The only thing that changes is the reference to the Availability Zone, CidrBlock and if it should give out public IP addresses.
 We have two inside, outside, and DB subnets that are created with this same process.
       
@@ -718,8 +680,8 @@ We have two inside, outside, and DB subnets that are created with this same proc
 
 <!-- #### insideSubnetA -->
 
-<details>
-      <summary><strong>insideSubnetA</strong></summary><p>
+<details><summary><h4 style="display:inline">insideSubnetA</h4></summary>
+<p>
 This resource creates one of the inside subnets we are using in the VPC. In this one we can see that the MapPublicIP option is missing because we do not want our inside net to be publicly accessible.
       
 ```json
@@ -739,8 +701,8 @@ This resource creates one of the inside subnets we are using in the VPC. In this
 
 <!-- #### DBSubnetA -->
 
-<details>
-      <summary><strong>DBSubnetA</strong></summary><p>
+<details><summary><h4 style="display:inline">DBSubnetA</h4></summary>
+<p>
 This resource creates one of the Db subnets we are using in the VPC. In this one we can see that the MapPublicIP option is missing because we do not want our inside net to be publicly accessible.
       
 ```json
@@ -760,8 +722,8 @@ This resource creates one of the Db subnets we are using in the VPC. In this one
 
 #### webSG
 
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
@@ -794,8 +756,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 #### appSG
 
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
@@ -841,8 +803,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 #### dbSG
 
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
@@ -876,8 +838,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 #### IG
 
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
@@ -895,8 +857,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 #### AttachGateway
 
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
@@ -915,8 +877,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 #### OutsideRT
 
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
@@ -934,8 +896,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 #### myRoute
 
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
@@ -956,8 +918,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 #### insideRoute
 
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
@@ -978,8 +940,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 #### RTSubnetAssocA
 
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
@@ -998,8 +960,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 #### NATGW
 
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
@@ -1019,8 +981,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 #### EIP
 
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
@@ -1039,8 +1001,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 #### stuff2
 
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
@@ -1052,8 +1014,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 #### stuff
 
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use.
 
 ```json
@@ -1146,10 +1108,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-## 2-db-setup
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h2 style="display:inline">2-db-setup</h2></summary>
+<p>
 
 ```json
 
@@ -1158,10 +1118,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-## 2-swc-setup
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h2 style="display:inline">2-swc-setup</h2></summary>
+<p>
 
 ```json
 
@@ -1170,10 +1128,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-## 3-app-launch-configs
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h2 style="display:inline">3-app-launch-configs</h2></summary>
+<p>
 
 ```json
 
@@ -1182,10 +1138,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-## 4-app-asg-lb
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h2 style="display:inline">4-app-asg-lb</h2></summary>
+<p>
 
 ```json
 
@@ -1194,10 +1148,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-## 5-web-launch-configs
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h2 style="display:inline">5-web-launch-configs</h2></summary>
+<p>
 
 ```json
 
@@ -1206,10 +1158,8 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-## 6-web-asg-lb
-
-<details>
-      <summary>Drop Down</summary><p>
+<details><summary><h2 style="display:inline">6-web-asg-lb</h2></summary>
+<p>
 
 ```json
 
