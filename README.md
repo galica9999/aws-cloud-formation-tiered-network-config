@@ -660,7 +660,7 @@ We will break up the file into more readable chunks for each section and resourc
 #### VPC
 
 <details>
-      <summary>Meep</summary><p>
+      <summary><strong>Meep</strong></summary><p>
 This resource creates the VPC our architecture will live in. 
       
 ```json
