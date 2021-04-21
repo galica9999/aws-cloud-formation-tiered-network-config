@@ -972,11 +972,9 @@ This resource associates a routing table with a subnet.  In this association we 
 </p>
 </details>
 
-#### NATGW
-
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<details><summary><h4 style="display:inline">NATGW</h4></summary>
 <p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+This resource calls out to the networkSetup template and passes down parameters for the template to use.
       
 ```json
 "NATGW": {
