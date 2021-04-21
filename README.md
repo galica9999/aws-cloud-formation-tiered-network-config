@@ -645,10 +645,10 @@ We will go over each file in the order that they are called:
 6. 5-web-launch-configs
 7. 6-web-asg-lb
 
-## 1-network-setup
+<!-- ## 1-network-setup -->
 
 <details>
-      <h1 style="display:inline-block"><summary>1-network-setup</summary></h1><p>
+      <summary><h1 style="display:inline-block">1-network-setup</h1></summary><p>
 The network setup template is the first template we need to create our architecture and is the longest file of them all.  It is the template that will be used to create the VPC, subnets, gateways, routes, and security groups. In this template, the parameters section replciates what is already in the masterTemplate.  This allows us to use the teamplate by itself without the masterTemplate to call it. We will focus on the resources section and output section here.
     
 As a note, all of these parameters should match what the masterTemplate has when calling it. Since that is how the masterTemplate parameters will be passed to this one.  If the template was used standalone then we would still have those inputs. Since it is being called by a masterTemplate, these parameters will be overwritten with what the masterTemplate sends down to it.
