@@ -720,11 +720,11 @@ This resource creates one of the Db subnets we are using in the VPC. In this one
 </p>
 </details>
 
-#### webSG
+<!-- #### webSG -->
 
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<details><summary><h4 style="display:inline">webSG</h4></summary>
 <p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+This resource creates a security group for the web AMIs and public subnets. It is what will allow access to certain ports from different IP addresses.
       
 ```json
 "webSG": {
@@ -751,14 +751,18 @@ This resource calls out to the networkSetup template and passes down parameters 
     
 ```
 
+- **Type** - The type is SecurityGroup and this will create a security group within AWS for us.
+- **GroupDescription** - This is a description of what the security group does or how we want to describe it.
+- **SecurityGroupIngress** - This option takes a list of parameters and each item in the list is an object. Each object contains the protocol used, from/to port that will be used to access it, and the IP range that is allowed to access that port. In our example we are allowing the whole internet to access port 80 from port 80 and port 3000 from port 80.
+
 </p>
 </details>
 
-#### appSG
+<!-- #### appSG -->
 
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<details><summary><h4 style="display:inline">appSG</h4></summary>
 <p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+This resource creates a security group for the internal app AMIs and subnets.   Here it depends on the outside subnets to be created and only allows access from the the outside subnets.
       
 ```json
 "appSG": {
@@ -801,11 +805,11 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-#### dbSG
+<!-- #### dbSG -->
 
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<details><summary><h4 style="display:inline">dbSG</h4></summary>
 <p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+This resource creates the security group for the database subnets and database itself.  It is allowinng access only from the internal network on ports 3306 that is used for mysql. 
       
 ```json
 "dbSG": {
@@ -836,11 +840,11 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-#### IG
+<!-- #### IG -->
 
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<details><summary><h4 style="display:inline">IG</h4></summary>
 <p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+This resource is creatinng an Internet Gateway for the outside network
       
 ```json
 "IG": {
@@ -855,11 +859,11 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-#### AttachGateway
+<!-- #### AttachGateway -->
 
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<details><summary><h4 style="display:inline">AttachGateway</h4></summary>
 <p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+This resource attaches our internetgateway to the VPC. This does not allow everything to get out of the VPC jsut by attaching it.  For anything to get outside, it needs to have a specific route to the internet gateway.  This is something we define later on in this configuration.
       
 ```json
 "AttachGateway": {
@@ -872,14 +876,16 @@ This resource calls out to the networkSetup template and passes down parameters 
     
 ```
 
+- **InternetGatewayId** - This is used by the GatewayAttachment api in cloud formation to attach an internet gateway to a VPC.
+
 </p>
 </details>
 
-#### OutsideRT
+<!-- #### OutsideRT -->
 
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<details><summary><h4 style="display:inline">OutsideRT</h4></summary>
 <p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+This resource creates a routing table for the VPC. We will be using this one for routes that go outside the VPC.  It is a similar setup for the inside routes.
       
 ```json
 "OutsideRT": {
@@ -898,7 +904,7 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 <details><summary><h4 style="display:inline">networkSetup</h4></summary>
 <p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+This resource creates a route and puts it into a routing table we specify.
       
 ```json
 "myRoute": {
@@ -912,15 +918,18 @@ This resource calls out to the networkSetup template and passes down parameters 
     }
     
 ```
+* **RouteTableId** - This ID is based on the routing table we created previously.  And it tells cloudformation we want this route to be assigned to a certainn routing table.
+* **DestinationCidrBlock** - This is the subnet match for the route.  In this case we are saying, if anything wants to go to the internet then this is the route to use.
+* **GatewayId** - This is what will be used as the gateway to get outside the VPC. In our case, we want this route to go to the internet gateway.
 
 </p>
 </details>
 
-#### insideRoute
+<!-- #### insideRoute -->
 
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<details><summary><h4 style="display:inline">insideRoute</h4></summary>
 <p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+This resource creates an inside route for out application subnets and uses a nat gateway to allow them out to the internet for updates.
       
 ```json
 "insideRoute": {
@@ -935,14 +944,16 @@ This resource calls out to the networkSetup template and passes down parameters 
     
 ```
 
+- **NatGatewayId** - In the outside route we specified an internet gateway to get out. But now we are using a nat gateway instead.
+
 </p>
 </details>
 
-#### RTSubnetAssocA
+<!-- #### RTSubnetAssocA -->
 
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<details><summary><h4 style="display:inline">RTSubnetAssocA</h4></summary>
 <p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+This resource associates a routing table with a subnet.  In this association we are associating the outside subnet with the outside routing table.
       
 ```json
 "RTSubnetAssocA": {
@@ -954,6 +965,9 @@ This resource calls out to the networkSetup template and passes down parameters 
     }
     
 ```
+
+- **SubnetId** - This is the subnet to be associated with the routing table.
+- **RouteTableId** - This is the routing table to be associated with a subnet. We can have multiple subnets on a single routing table.
 
 </p>
 </details>
