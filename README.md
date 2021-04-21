@@ -900,9 +900,7 @@ This resource creates a routing table for the VPC. We will be using this one for
 </p>
 </details>
 
-#### myRoute
-
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<details><summary><h4 style="display:inline">myRoute</h4></summary>
 <p>
 This resource creates a route and puts it into a routing table we specify.
       
