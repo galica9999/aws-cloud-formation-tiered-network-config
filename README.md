@@ -1043,10 +1043,84 @@ This resource creates an elastic IP address from AWS for our VPC.  This elastic 
 
 <details><summary><h2 style="display:inline">2-db-setup</h2></summary>
 <p>
+This template creates the DB and returns info about to be used in another template.  The parameters work the same as in the network setup, however, there are some that only have a type of string and no other parameters.  This is because they are parameters we need to be passed down that aren't in the masterTemplate parameters. So they are actinng as placeholders for the data to be passed down.  We use this to access outputs from other templates.
 
+After everything has been created, we output the databases endpoint address./ The endpoint address is what is used to access the database over the network.
+
+<details><summary><h4 style="display:inline">dbSubnetGroup</h4></summary>
+<p>
+This resource creates a group of two or more subnets for a database to live in.  
+      
 ```json
-
+"dbSubnetGroup": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": "description",
+        "SubnetIds": [
+          { "Ref": "DBCloudformationSubnetA" },
+          { "Ref": "DBCloudformationSubnetB" }
+        ],
+        "Tags": [
+          {
+            "Key": "String",
+            "Value": "String"
+          }
+        ]
+      }
+    }
+    
 ```
+
+- **SubnetIds** - This field takes a list of subnets to be added into the group.
+
+</p>
+</details>
+
+<details><summary><h4 style="display:inline">DB</h4></summary>
+<p>
+This resource creates the actual database we will use.  
+      
+```json
+"DB": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "DBInstanceIdentifier": { "Ref": "DBInstanceID" },
+        "DBName": { "Ref": "DBName" },
+        "DBInstanceClass": {
+          "Ref": "DBInstanceClass"
+        },
+        "DBSubnetGroupName": { "Ref": "dbSubnetGroup" },
+        "VPCSecurityGroups": [{ "Ref": "dbCloudformationSG" }],
+        "AllocatedStorage": {
+          "Ref": "DBAllocatedStorage"
+        },
+        "Engine": "MySQL",
+        "EngineVersion": "8.0.16",
+        "MasterUsername": {
+          "Ref": "DBUsername"
+        },
+        "MasterUserPassword": {
+          "Ref": "DBPassword"
+        }
+      }
+    }
+  }
+    
+```
+
+- **DBInstanceIdentifier** - This field is the name of the DB as it will show up in RDS.
+
+* **DBName** - This is to name the intial database to be created when the database starts.
+* **DBInstanceClass** - This tells cloud formation what vm type to use for the DB. t2.micro, m2.medium, etc...
+* **DBSubnetGroupName** - This fields tell the DB which subnet group it will use.
+* **VPCSecurityGroups** - The db needs a security group to allow us access to it. So we specify which security it will use.
+* **Engine** - This determines the type of database it will create. In our case we are MySQL.
+* **EngineVersion** - This is the version of MySQL. More info can be found in the RDS documentation on what is supported.
+* **MasterUname** - this is the administrator username for the database.
+* **MasterUserPassword** - This is the password for the administrator account.
+
+</p>
+</details>
 
 </p>
 </details>
