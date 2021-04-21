@@ -974,7 +974,7 @@ This resource associates a routing table with a subnet.  In this association we 
 
 <details><summary><h4 style="display:inline">NATGW</h4></summary>
 <p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use.
+This resource creates the nat gateway needed for our internal AMIs to be able to access  the internet.
       
 ```json
 "NATGW": {
@@ -988,14 +988,17 @@ This resource calls out to the networkSetup template and passes down parameters 
     
 ```
 
+- **AllocationId** - this allocation ID is used to determine what public IP the nat gateway should have.
+- **SubnetId** - For a nat gateway we must put it into a public subnet so that it has internet access too.
+
 </p>
 </details>
 
-#### EIP
+<!-- #### EIP -->
 
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<details><summary><h4 style="display:inline">EIP</h4></summary>
 <p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+This resource creates an elastic IP address from AWS for our VPC.  This elastic IP will be used for the nat gateway.
       
 ```json
 "EIP": {
@@ -1007,33 +1010,6 @@ This resource calls out to the networkSetup template and passes down parameters 
     }
     
 ```
-
-</p>
-</details>
-
-#### stuff2
-
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
-<p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use. 
-      
-```json
-
-````
-
-</p>
-</details>
-
-#### stuff
-
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
-<p>
-This resource calls out to the networkSetup template and passes down parameters for the template to use.
-
-```json
-
-
-````
 
 </p>
 </details>
