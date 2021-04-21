@@ -56,9 +56,9 @@ The description is a blurb of what the template is for so that anyone reading it
 
 ## Mappings
 
-Mappings are used to define what resource should be used in which region of AWS. For example: an AWS VM(AMI) will have separate IDs depending on the region it is in. We can use the mappings to say "use this AMI if in us-east-1, or use this AMI if in ap-northeast-1".
+Mappings are used to define what resource should be used in which region of AWS. For example: an AWS VM(AMI) will have separate IDs depending on the region it is in. We can use the mappings to say, "use this AMI if in us-east-1 or use this AMI if in ap-northeast-1".
 
-For each region we define, we want to specify the virtulization type and the AMI ID. The virtualization type is generally decided by what the AMI was created for, but sometimes you can have multiple types for one AMI. This is why we have to specify which type we want to look for.
+For each region we define, we want to specify the virtualization type and the AMI ID. The virtualization type is generally decided by what the AMI was created for, but sometimes you can have multiple types for one AMI. This is why we have to specify which type we want to look for.
 
 ```json
 "Mappings": {
@@ -109,7 +109,7 @@ CidrBlock is used to define the subnet to be used for the VPC being created.  It
 "CidrBlock": {
       "AllowedPattern": "((\\d{1,3})\\.){3}\\d{1,3}/\\d{1,2}",
       "Default": "10.0.0.0/16",
-      "Description": "VPC CIDR Block (eg 10.0.0.0/16)",
+      "Description": "VPC CIDR Block (e.g., 10.0.0.0/16)",
       "Type": "String"
     }
 ```
@@ -117,9 +117,9 @@ CidrBlock is used to define the subnet to be used for the VPC being created.  It
 The CidrBlock parameter has four parameters.
 
 - **AllowedPattern** - This contains a regex to allow certain text to be entered into the input.
-- **Default** - This is used to make have the input laod with a default value. In this case it is a whole subnet.
+- **Default** - This is used to make have the input load with a default value. In this case it is a whole subnet.
 - **Description** - This contains an explanation of what the input is used for or what should be input.
-- **Type** - _REQUIRED_ - This field is required and determines how it will be interpreted as a parameter. SInnce it is of type strinng, it will be an input box when looking at the parameter section in CloudFormation. For other parameters it could be a dropdown, but this is determined by the type.
+- **Type** - _REQUIRED_ - This field is required and determines how it will be interpreted as a parameter. Since it is of type string, it will be an input box when looking at the parameter section in CloudFormation. For other parameters it could be a dropdown, but this is determined by the type.
 
 Since we have gone over AllowedPattern, Default, and Description we will not go over them again unless there is a major change in them. But for the most part the values will change, but the concept will remain the same.
 
@@ -128,7 +128,7 @@ Since we have gone over AllowedPattern, Default, and Description we will not go 
 
 <details><summary><h4 style="display:inline">DBInstanceID</h4></summary>
 <p>
-This field is used to name the identifier when it is created. The identifier is used as the true name of the database when referncing it.
+This field is used to name the identifier when it is created. The identifier is used as the true name of the database when referencing it.
       
 ```json
 "DBInstanceID": {
@@ -150,7 +150,7 @@ This field is used to name the identifier when it is created. The identifier is 
 
 <details><summary><h4 style="display:inline">DBName</h4></summary>
 <p>
-This field is used to name the database.  Its used as an easy to find name for us to use.
+This field is used to name the database.  It’s used as an easy to find name for us to use.
       
 ```json
 "DBName": {
@@ -169,7 +169,7 @@ This field is used to name the database.  Its used as an easy to find name for u
 
 <details><summary><h4 style="display:inline">DBInstanceClass</h4></summary>
 <p>
-This field is used to determine the class type to be used.  This determine show much ram and cpu it will have on hand.
+This field is used to determine the class type to be used.  This determine show much ram and CPU it will have on hand.
       
 ```json
 "DBInstanceClass": {
@@ -242,7 +242,7 @@ This field is used to create a password for the database user being created.
 
 <details><summary><h4 style="display:inline">AppAMItype</h4></summary>
 <p>
-This field is used to determine the AMI type.  It determines how much ram and cpu is allocated to it.  
+This field is used to determine the AMI type.  It determines how much ram and CPU is allocated to it.  
       
 ```javascript
 "AppAMItype": {
@@ -315,7 +315,7 @@ This field allows us to choose the availability zone to be used for each subnet.
       
 ```json
 "AvailabilityZone1": {
-      "Description": "The AvailabilityZone to use for the first subnet",
+      "Description": "The Availability Zone to use for the first subnet",
       "Type": "AWS::EC2::AvailabilityZone::Name"
     }
 ```
@@ -338,7 +338,7 @@ We will be going over the 7 resources that we are creating in this master templa
 - webLaunchConfig
 - WebAsgLb
 
-We will go over each of these resources as they are defined in the master template and then each resource will have their own section. Most of these won;t too different from the masterTemplate, so we will only go over the if anything is different and how some of the functions are being used.
+We will go over each of these resources as they are defined in the master template and then each resource will have their own section. Most of these won’t be too different from the masterTemplate, so we will only go over the if anything is different and how some of the functions are being used.
 
 <details><summary><h4 style="display:inline">networkSetup</h4></summary>
 <p>
@@ -363,10 +363,10 @@ This resource calls out to the networkSetup template and passes down parameters 
     }
 ```
 
-- **Type** - The type is of an AWS resource. This specific type of CloudFOrmation::Stack is what tells Cloudformation to look for another template and pass the parameters down to that template.
+- **Type** - The type is of an AWS resource. This specific type of CloudFormation::Stack is what tells Cloudformation to look for another template and pass the parameters down to that template.
 - **Properties** - It defines what will be called for the template and holds the parameters to be passed down. These properties will generally only have two sections: TemplateURL and Parameters.  
-   _ **TemplateURL** - This is URL location of the template we want to call. It can be a github link or anything else that is publicly accesible. But generally we host them in AWS S3 buckets. If it is in a buvket, we do not need to make the file public.  
-   _ **Parameters** - This holds the values of what will be sent to the template to be used for resource creation. This field works the same way as the parameters for the masterTemplate. \* **{"Ref":"nameOfResource"}** - For each of the parameters, we are using a reference assignment. Ths means we are pulling the value that was input into the parameter field called CidrBlock. It works the same way for the other parameters we create a reference for.
+   _ **TemplateURL** - This is URL location of the template we want to call. It can be a GitHub link or anything else that is publicly accessible. But generally, we host them in AWS S3 buckets. If it is in a bucket, we do not need to make the file public.  
+   _ **Parameters** - This holds the values of what will be sent to the template to be used for resource creation. This field works the same way as the parameters for the masterTemplate. \* **{"Ref":"nameOfResource"}** - For each of the parameters, we are using a reference assignment. This means we are pulling the value that was input into the parameter field called CidrBlock. It works the same way for the other parameters we create a reference for.
 
 </p>
 </details>
@@ -402,8 +402,8 @@ This resource calls out to the DBSetup template and passes down parameters for t
     }
 ```
 
-- **DependsOn** - This field is used to make sure one resource isn't created until another is finished. In this case, the DBSetup is going to wait for the NetworkSetup to complete and then it will start. This field, can take either one input that does not need to be in a list, or it can take multiple inputs if it needs to wait on multiple resources to finish up.
-- **{"Fn::GetAtt":["nameOfResource","Outputs.nameOfOutput"]}** - The Fn::GetAtt is used to get attributes of a resource. For the dbCoudformationSG and subnets, we need to get a resource that was created in another template. To do that we define thigs called _Outputs_ (we will go over outputs in more detail inn the nested template section). Those outputs have a name we define and we are able to use them by usinng the Fn:GetAtt function. The function takes a list with two attributes. The first is the resource you want to look at, in this case it is networkSetup, and the second is the output we want. Then these attributes are passed down to the nest template beinng called in this resource.
+- **DependsOn** - This field is used to make sure one resource isn't created until another is finished. In this case, the DBSetup is going to wait for the NetworkSetup to complete and then it will start. This field can take either one input that does not need to be in a list, or it can take multiple inputs if it needs to wait on multiple resources to finish up.
+- **{"Fn::GetAtt":["nameOfResource","Outputs.nameOfOutput"]}** - The Fn::GetAtt is used to get attributes of a resource. For the dbCoudformationSG and subnets, we need to get a resource that was created in another template. To do that we define thigs called _Outputs_ (we will go over outputs in more detail in the nested template section). Those outputs have a name we define, and we are able to use them by using the Fn:GetAtt function. The function takes a list with two attributes. The first is the resource you want to look at, in this case it is networkSetup, and the second is the output we want. Then these attributes are passed down to the nest template being called in this resource.
 
 </p>
 </details>
@@ -595,7 +595,7 @@ This resource calls out to the web autoscaling group and load balancer template 
 
 # Nested Templates
 
-All of these nested templates are the same resources that are being called within the masterTemplate. It starts with the network setup, then database and stealthwatch, and so on. We will gover each of those configuration files explainn what each does as we get to it. Most of the concepts will be repeated from the masterTemplate but there are some things we will need to go over when we get there.
+All of these nested templates are the same resources that are being called within the masterTemplate. It starts with the network setup, then database and stealthwatch, and so on. We will go over each of those configuration files explain what each does as we get to it. Most of the concepts will be repeated from the masterTemplate but there are some things we will need to go over when we get there.
 
 We will go over each file in the order that they are called:
 
@@ -611,7 +611,7 @@ We will go over each file in the order that they are called:
 
 <details><summary><h2 style="display:inline">1-network-setup</h2></summary>
 <p>
-The network setup template is the first template we need to create our architecture and is the longest file of them all.  It is the template that will be used to create the VPC, subnets, gateways, routes, and security groups. In this template, the parameters section replciates what is already in the masterTemplate.  This allows us to use the teamplate by itself without the masterTemplate to call it. We will focus on the resources section and output section here.
+The network setup template is the first template we need to create our architecture and is the longest file of them all.  It is the template that will be used to create the VPC, subnets, gateways, routes, and security groups. In this template, the parameters section replicates what is already in the masterTemplate.  This allows us to use the template by itself without the masterTemplate to call it. We will focus on the resources section and output section here.
     
 As a note, all of these parameters should match what the masterTemplate has when calling it. Since that is how the masterTemplate parameters will be passed to this one.  If the template was used standalone then we would still have those inputs. Since it is being called by a masterTemplate, these parameters will be overwritten with what the masterTemplate sends down to it.
 
@@ -638,12 +638,12 @@ This resource creates the VPC our architecture will live in.
     
 ```
 
-- **Type** - The type is of the AWS resouce VPC. Meaning it will create a VPC with the properties we specify.
-- **Properties** - The properties are the values that will be used to specify how the VPC will be created and features it will have enabled, or will support.
+- **Type** - The type is of the AWS resource VPC. Meaning it will create a VPC with the properties we specify.
+- **Properties** - The properties are the values that will be used to specify how the VPC will be created and features it will have enabled or will support.
 - **CidrBlock** - We are referencing the CidrBlock parameter. It was defined in the masterTemplate but can be used here since we have defined it in this template as well.
 - **EnableDnsSupport** - This is set true because we want our VPC to allow DNS to be used in our network.
 - **EnableDnsHostname** - This is set to true because we want our VPC to allow hostnames to be assigned within our network.
-- **InstanceTenancy** - This detemines if we will use dedicated host for our instances or not. The default does not use dedicated instances. If we wanted dedicated ones, then we could change this be "dedicated"
+- **InstanceTenancy** - This determines if we will use dedicated host for our instances or not. The default does not use dedicated instances. If we wanted dedicated ones, then we could change this be "dedicated"
 - **Tags** - We are giving this VPC a tag of Name. This will allow us to find out VPC faster since the name always shows up in the left most column.
 
 </p>
@@ -671,7 +671,7 @@ We have two inside, outside, and DB subnets that are created with this same proc
 
 - **Type** - The type of this resource is EC2::Subnet. This means it will be using the EC2::Subnet api in cloud formation to create a subnet with the properties we specify.
 - **MapPublicIpOnLaunch** - This is set to true, because we want our AMIs to get public IP addresses when they are created in the public subnet.
-- **VpcId** - We are referencing the VPC so cloud formation knows what VPC to put our subnet in.
+- **VpcId** - We are referencing the VPC, so cloud formation knows what VPC to put our subnet in.
 - **CidrBlock** - The cidrblock is what ip address block we want to assign to this subnet. In this case we are assigning a /24 subnet that is being referenced from the parameters of the template. This will change for each of the subsequent subnets.
 - **AvailabilityZone** - The availability
 
@@ -762,7 +762,7 @@ This resource creates a security group for the web AMIs and public subnets. It i
 
 <details><summary><h4 style="display:inline">appSG</h4></summary>
 <p>
-This resource creates a security group for the internal app AMIs and subnets.   Here it depends on the outside subnets to be created and only allows access from the the outside subnets.
+This resource creates a security group for the internal app AMIs and subnets.   Here it depends on the outside subnets to be created and only allows access from the outside subnets.
       
 ```json
 "appSG": {
@@ -809,14 +809,14 @@ This resource creates a security group for the internal app AMIs and subnets.   
 
 <details><summary><h4 style="display:inline">dbSG</h4></summary>
 <p>
-This resource creates the security group for the database subnets and database itself.  It is allowinng access only from the internal network on ports 3306 that is used for mysql. 
+This resource creates the security group for the database subnets and database itself.  It is allowing access only from the internal network on ports 3306 that is used for MySQL. 
       
 ```json
 "dbSG": {
       "Type": "AWS::EC2::SecurityGroup",
       "DependsOn": ["insideSubnetA", "insideSubnetB"],
       "Properties": {
-        "GroupDescription": "Allow mysql access to db",
+        "GroupDescription": "Allow MySQL access to db",
         "VpcId": { "Ref": "VPC" },
         "SecurityGroupIngress": [
           {
@@ -844,7 +844,7 @@ This resource creates the security group for the database subnets and database i
 
 <details><summary><h4 style="display:inline">IG</h4></summary>
 <p>
-This resource is creatinng an Internet Gateway for the outside network
+This resource is creating an Internet Gateway for the outside network
       
 ```json
 "IG": {
@@ -863,7 +863,7 @@ This resource is creatinng an Internet Gateway for the outside network
 
 <details><summary><h4 style="display:inline">AttachGateway</h4></summary>
 <p>
-This resource attaches our internetgateway to the VPC. This does not allow everything to get out of the VPC jsut by attaching it.  For anything to get outside, it needs to have a specific route to the internet gateway.  This is something we define later on in this configuration.
+This resource attaches our internet gateway to the VPC. This does not allow everything to get out of the VPC just by attaching it.  For anything to get outside, it needs to have a specific route to the internet gateway.  This is something we define later on in this configuration.
       
 ```json
 "AttachGateway": {
@@ -916,7 +916,7 @@ This resource creates a route and puts it into a routing table we specify.
     }
     
 ```
-* **RouteTableId** - This ID is based on the routing table we created previously.  And it tells cloudformation we want this route to be assigned to a certainn routing table.
+* **RouteTableId** - This ID is based on the routing table we created previously.  And it tells cloudformation we want this route to be assigned to a certain routing table.
 * **DestinationCidrBlock** - This is the subnet match for the route.  In this case we are saying, if anything wants to go to the internet then this is the route to use.
 * **GatewayId** - This is what will be used as the gateway to get outside the VPC. In our case, we want this route to go to the internet gateway.
 
@@ -927,7 +927,7 @@ This resource creates a route and puts it into a routing table we specify.
 
 <details><summary><h4 style="display:inline">insideRoute</h4></summary>
 <p>
-This resource creates an inside route for out application subnets and uses a nat gateway to allow them out to the internet for updates.
+This resource creates an inside route for our application subnets and uses a nat gateway to allow them out to the internet for updates.
       
 ```json
 "insideRoute": {
@@ -1014,7 +1014,7 @@ This resource creates an elastic IP address from AWS for our VPC.  This elastic 
 
 ### Outputs
 
-The outputs section in this template is used to pass resources that were created in this template back to the master tempalte so they can be used in other templates. The outputs are just referencing the values of the created resources, so we will only go over one since the format does not change, only the resource being exported does.
+The outputs section in this template is used to pass resources that were created in this template back to the master template so they can be used in other templates. The outputs are just referencing the values of the created resources, so we will only go over one since the format does not change, only the resource being exported does.
 
 <details><summary><h4 style="display:inline">StackVPC</h4></summary>
 <p>
@@ -1031,9 +1031,9 @@ This resource creates an elastic IP address from AWS for our VPC.  This elastic 
     
 ```
 
-- **Value** - The value is the variable we are passing back to the master template. If we try access the stackVPC output, we would get whatever is set in this value parameter. In this case it is the VPC ID.
+- **Value** - The value is the variable we are passing back to the master template. If we try access the stackVPC output, we will get whatever is set in this value parameter. In this case it is the VPC ID.
 - **Export** - We are exporting a name too so it actually gets exported as something that can be found.
-- **Fn:Sub** - This function allows us to substitute in a environment variable into a string so the name can be dynamic.
+- **Fn:Sub** - This function allows us to substitute in an environment variable into a string so the name can be dynamic.
 
 </p>
 </details>
@@ -1043,7 +1043,7 @@ This resource creates an elastic IP address from AWS for our VPC.  This elastic 
 
 <details><summary><h2 style="display:inline">2-db-setup</h2></summary>
 <p>
-This template creates the DB and returns info about to be used in another template.  The parameters work the same as in the network setup, however, there are some that only have a type of string and no other parameters.  This is because they are parameters we need to be passed down that aren't in the masterTemplate parameters. So they are actinng as placeholders for the data to be passed down.  We use this to access outputs from other templates.
+This template creates the DB and returns info about to be used in another template.  The parameters work the same as in the network setup, however, there are some that only have a type of string and no other parameters.  This is because they are parameters we need to be passed down that aren't in the masterTemplate parameters. So, they are acting as placeholders for the data to be passed down.  We use this to access outputs from other templates.
 
 After everything has been created, we output the databases endpoint address./ The endpoint address is what is used to access the database over the network.
 
@@ -1110,10 +1110,10 @@ This resource creates the actual database we will use.
 
 - **DBInstanceIdentifier** - This field is the name of the DB as it will show up in RDS.
 
-* **DBName** - This is to name the intial database to be created when the database starts.
+* **DBName** - This is to name the initial database to be created when the database starts.
 * **DBInstanceClass** - This tells cloud formation what vm type to use for the DB. t2.micro, m2.medium, etc...
 * **DBSubnetGroupName** - This fields tell the DB which subnet group it will use.
-* **VPCSecurityGroups** - The db needs a security group to allow us access to it. So we specify which security it will use.
+* **VPCSecurityGroups** - The db needs a security group to allow us access to it. So, we specify which security it will use.
 * **Engine** - This determines the type of database it will create. In our case we are MySQL.
 * **EngineVersion** - This is the version of MySQL. More info can be found in the RDS documentation on what is supported.
 * **MasterUname** - this is the administrator username for the database.
@@ -1320,7 +1320,7 @@ This resource creates the actual database we will use.
 
 <details><summary><h2 style="display:inline">3-app-launch-configs</h2></summary>
 <p>
-The app launch configuration is the configuration that will be used when new AMIs are created.  It contains what it will do on startup and all of the information we need to create an AMI wihtout doing the actual creation itself. We then output the application launch config to be used in other templates.
+The app launch configuration is the configuration that will be used when new AMIs are created.  It contains what it will do on startup and all of the information we need to create an AMI without doing the actual creation itself. We then output the application launch config to be used in other templates.
 
 <details><summary><h4 style="display:inline">appLaunchConfig</h4></summary>
 <p>
@@ -1383,10 +1383,10 @@ This resource creates the launch configuration we will use for the application A
 - **ImageId** - This field is used to tell what image will be used to create the AMI.
 - **InstanceType** - This field is used to determine the resources the instance will have to use. t2.mirco, etc...
 - **KeyName** - This is used to define what key will be used to ssh into the device should we need to do so.
-- **SecurityGroupIds** - This is used to attach the instance to certain security groups. In this case we are attaching them to the interal application security groups.
-- **UserData** - This field is used to pass script the instance will run after it has come up. For us, we are installinng packages and replacing configuration file lines in it.
+- **SecurityGroupIds** - This is used to attach the instance to certain security groups. In this case we are attaching them to the internal application security groups.
+- **UserData** - This field is used to pass script the instance will run after it has come up. For us, we are installing packages and replacing configuration file lines in it.
 - **Fn::Base64** - The script needs to be encoded in base 64 to work, so we are explicitly telling it to convert it to base 64 using this function.
-- **Fn::Join** - This function takes a list of two arguments. The first is the delimiter on how the second argument should be built. The second argument is a list of what you want to do. The first agument for us is a empty strinng, this means that after each comma in the second argument it will join the arguments with nothing in between them. We could add comma in between the quotes and it will make a large line with commas in between each item in the list.
+- **Fn::Join** - This function takes a list of two arguments. The first is the delimiter on how the second argument should be built. The second argument is a list of what you want to do. The first argument for us is an empty string, this means that after each comma in the second argument it will join the arguments with nothing in between them. We could add comma in between the quotes and it will make a large line with commas in between each item in the list.
 
 </p>
 </details>
