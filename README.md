@@ -613,7 +613,7 @@ We will go over each file in the order that they are called:
 6. 5-web-launch-configs
 7. 6-web-asg-lb
 
-### 1-network-setup
+## 1-network-setup
 <details>
       <summary>Drop Down</summary><p>
 The network setup template is the first template we need to create our architecture and is the longest file of them all.  It is the template that will be used to create the VPC, subnets, gateways, routes, and security groups. In this template, the parameters section replciates what is already in the masterTemplate.  This allows us to use the teamplate by itself without the masterTemplate to call it. We will focus on the resources section and output section here.
@@ -622,10 +622,17 @@ As a note, all of these parameters should match what the masterTemplate has when
 
 We will break up the file into more readable chunks for each section and resource.
 
-#### Resources
+### Resources
+
+
+#### VPC
+
+<details>
+      <summary>Drop Down</summary><p>
+This resource calls out to the networkSetup template and passes down parameters for the template to use. 
+      
 ```json
-  "Resources": {
-    "VPC": {
+"VPC": {
       "Type": "AWS::EC2::VPC",
       "Properties": {
         "CidrBlock": { "Ref": "CidrBlock" },
@@ -634,7 +641,14 @@ We will break up the file into more readable chunks for each section and resourc
         "InstanceTenancy": "default",
         "Tags": [{ "Key": "Name", "Value": { "Ref": "AWS::StackName" } }]
       }
-    },
+    }
+    
+```
+
+</p>
+</details>
+
+```json
     "outsideSubnetA": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
@@ -868,11 +882,10 @@ We will break up the file into more readable chunks for each section and resourc
         "Domain": "vpc"
       }
     }
-  }
   
 ```
 
-#### Outputs
+### Outputs
 
 ```json
 
