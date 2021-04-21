@@ -1014,82 +1014,29 @@ This resource creates an elastic IP address from AWS for our VPC.  This elastic 
 
 ### Outputs
 
-```json
+The outputs section in this template is used to pass resources that were created in this template back to the master tempalte so they can be used in other templates. The outputs are just referencing the values of the created resources, so we will only go over one since the format does not change, only the resource being exported does.
 
-  "Outputs": {
-    "StackVPC": {
+<details><summary><h4 style="display:inline">StackVPC</h4></summary>
+<p>
+This resource creates an elastic IP address from AWS for our VPC.  This elastic IP will be used for the nat gateway.
+      
+```json
+"StackVPC": {
       "Description": "The ID of the VPC",
       "Value": { "Ref": "VPC" },
       "Export": {
         "Name": { "Fn::Sub": "${AWS::StackName}-VPCID" }
       }
-    },
-    "outsideSubnetA": {
-      "Description": "The ID of outside subnet A",
-      "Value": { "Ref": "outsideSubnetA" },
-      "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-OutsideNetA" }
-      }
-    },
-    "outsideSubnetB": {
-      "Description": "The ID of outside subnet B",
-      "Value": { "Ref": "outsideSubnetB" },
-      "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-OutsideNetB" }
-      }
-    },
-    "insideSubnetA": {
-      "Description": "The ID of inside subnet A",
-      "Value": { "Ref": "insideSubnetA" },
-      "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-InsideNetA" }
-      }
-    },
-    "insideSubnetB": {
-      "Description": "The ID of inside subnet B",
-      "Value": { "Ref": "insideSubnetB" },
-      "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-InsideNetB" }
-      }
-    },
-    "dbSubnetA": {
-      "Description": "The ID of db subnet A",
-      "Value": { "Ref": "DBSubnetA" },
-      "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-dbNetA" }
-      }
-    },
-    "dbSubnetB": {
-      "Description": "The ID of db subnet B",
-      "Value": { "Ref": "DBSubnetB" },
-      "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-dbNetB" }
-      }
-    },
-    "webSG": {
-      "Description": "The ID of webSG",
-      "Value": { "Ref": "webSG" },
-      "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-webSG" }
-      }
-    },
-    "appSG": {
-      "Description": "The ID ofappSG",
-      "Value": { "Ref": "appSG" },
-      "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-appSG" }
-      }
-    },
-    "dbSG": {
-      "Description": "The ID of dbSG",
-      "Value": { "Ref": "dbSG" },
-      "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-dbSG" }
-      }
     }
-  }
-
+    
 ```
+
+- **Value** - The value is the variable we are passing back to the master template. If we try access the stackVPC output, we would get whatever is set in this value parameter. In this case it is the VPC ID.
+- **Export** - We are exporting a name too so it actually gets exported as something that can be found.
+- **Fn:Sub** - This function allows us to substitute in a environment variable into a string so the name can be dynamic.
+
+</p>
+</details>
 
 </p>
 </details>
