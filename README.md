@@ -602,3 +602,427 @@ This resource calls out to the networkSetup template and passes down parameters 
 
 
 # Nested Templates
+All of these nested templates are the same resources that are being called within the masterTemplate.  It starts with the network setup, then database and stealthwatch, and so on.  We will gover each of those configuration files explainn what each does as we get to it.  Most of the concepts will be repeated from the masterTemplate but there are some things we will need to go over when we get there.
+
+We will go over each file in the order that they are called:
+1. 1-network-setup
+2. 2-db-setup
+3. 2-swc-setup
+4. 3-app-launch-configs
+5. 4-app-asg-lb
+6. 5-web-launch-configs
+7. 6-web-asg-lb
+
+### 1-network-setup
+<details>
+      <summary>Drop Down</summary><p>
+The network setup template is the first template we need to create our architecture and is the longest file of them all.  It is the template that will be used to create the VPC, subnets, gateways, routes, and security groups. In this template, the parameters section replciates what is already in the masterTemplate.  This allows us to use the teamplate by itself without the masterTemplate to call it. We will focus on the resources section and output section here.
+    
+As a note, all of these parameters should match what the masterTemplate has when calling it. Since that is how the masterTemplate parameters will be passed to this one.  If the template was used standalone then we would still have those inputs. Since it is being called by a masterTemplate, these parameters will be overwritten with what the masterTemplate sends down to it.
+
+We will break up the file into more readable chunks for each section and resource.
+
+#### Resources
+```json
+  "Resources": {
+    "VPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": { "Ref": "CidrBlock" },
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "InstanceTenancy": "default",
+        "Tags": [{ "Key": "Name", "Value": { "Ref": "AWS::StackName" } }]
+      }
+    },
+    "outsideSubnetA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "MapPublicIpOnLaunch": true,
+        "VpcId": { "Ref": "VPC" },
+        "CidrBlock": { "Ref": "OutsideNetA" },
+        "AvailabilityZone": { "Ref": "AvailabilityZone1" }
+      }
+    },
+    "outsideSubnetB": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "MapPublicIpOnLaunch": true,
+        "VpcId": { "Ref": "VPC" },
+        "CidrBlock": { "Ref": "OutsideNetB" },
+        "AvailabilityZone": { "Ref": "AvailabilityZone2" }
+      }
+    },
+    "insideSubnetA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "CidrBlock": { "Ref": "InsideNetA" },
+        "AvailabilityZone": { "Ref": "AvailabilityZone1" }
+      }
+    },
+    "insideSubnetB": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "CidrBlock": { "Ref": "InsideNetB" },
+        "AvailabilityZone": { "Ref": "AvailabilityZone2" }
+      }
+    },
+    "DBSubnetA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "CidrBlock": { "Ref": "DBNetA" },
+        "AvailabilityZone": { "Ref": "AvailabilityZone1" }
+      }
+    },
+    "DBSubnetB": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "CidrBlock": { "Ref": "BDNetB" },
+        "AvailabilityZone": { "Ref": "AvailabilityZone2" }
+      }
+    },
+    "webSG": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow http and port 3000 to web servers",
+        "VpcId": { "Ref": "VPC" },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 3000,
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+    "appSG": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "DependsOn": ["outsideSubnetB", "outsideSubnetA"],
+      "Properties": {
+        "GroupDescription": "Allow http to app server",
+        "VpcId": { "Ref": "VPC" },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "CidrIp": { "Ref": "OutsideNetA" }
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "CidrIp": { "Ref": "OutsideNetB" }
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIp": { "Ref": "OutsideNetA" }
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIp": { "Ref": "OutsideNetB" }
+          }
+        ]
+      }
+    },
+    "dbSG": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "DependsOn": ["insideSubnetA", "insideSubnetB"],
+      "Properties": {
+        "GroupDescription": "Allow mysql access to db",
+        "VpcId": { "Ref": "VPC" },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 3306,
+            "ToPort": 3306,
+            "CidrIp": { "Ref": "InsideNetA" }
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 3306,
+            "ToPort": 3306,
+            "CidrIp": { "Ref": "InsideNetB" }
+          }
+        ]
+      }
+    },
+    "IG": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [{ "Key": "Name", "Value": "cfIG" }]
+      }
+    },
+    "AttachGateway": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "InternetGatewayId": { "Ref": "IG" }
+      }
+    },
+    "OutsideRT": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" }
+      }
+    },
+    "myRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "IG",
+      "Properties": {
+        "RouteTableId": { "Ref": "OutsideRT" },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": { "Ref": "IG" }
+      }
+    },
+    "InsideRT": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" }
+      }
+    },
+    "DbRT": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" }
+      }
+    },
+    "insideRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "NATGW",
+      "Properties": {
+        "RouteTableId": { "Ref": "InsideRT" },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": { "Ref": "NATGW" }
+      }
+    },
+    "RTSubnetAssocA": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "outsideSubnetA" },
+        "RouteTableId": { "Ref": "OutsideRT" }
+      }
+    },
+    "RTSubnetAssocB": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "outsideSubnetB" },
+        "RouteTableId": { "Ref": "OutsideRT" }
+      }
+    },
+    "RTInSubnetAssocA": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "insideSubnetA" },
+        "RouteTableId": { "Ref": "InsideRT" }
+      }
+    },
+    "RTInSubnetAssocB": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "insideSubnetB" },
+        "RouteTableId": { "Ref": "InsideRT" }
+      }
+    },
+    "RTDbSubnetAssocA": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "DBSubnetA" },
+        "RouteTableId": { "Ref": "DbRT" }
+      }
+    },
+    "RTDbSubnetAssocB": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "DBSubnetB" },
+        "RouteTableId": { "Ref": "DbRT" }
+      }
+    },
+    "NATGW": {
+      "Type": "AWS::EC2::NatGateway",
+      "DependsOn": "EIP",
+      "Properties": {
+        "AllocationId": { "Fn::GetAtt": ["EIP", "AllocationId"] },
+        "SubnetId": { "Ref": "outsideSubnetA" }
+      }
+    },
+    "EIP": {
+      "DependsOn": "AttachGateway",
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc"
+      }
+    }
+  }
+  
+```
+
+#### Outputs
+
+```json
+
+  "Outputs": {
+    "StackVPC": {
+      "Description": "The ID of the VPC",
+      "Value": { "Ref": "VPC" },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-VPCID" }
+      }
+    },
+    "outsideSubnetA": {
+      "Description": "The ID of outside subnet A",
+      "Value": { "Ref": "outsideSubnetA" },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-OutsideNetA" }
+      }
+    },
+    "outsideSubnetB": {
+      "Description": "The ID of outside subnet B",
+      "Value": { "Ref": "outsideSubnetB" },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-OutsideNetB" }
+      }
+    },
+    "insideSubnetA": {
+      "Description": "The ID of inside subnet A",
+      "Value": { "Ref": "insideSubnetA" },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-InsideNetA" }
+      }
+    },
+    "insideSubnetB": {
+      "Description": "The ID of inside subnet B",
+      "Value": { "Ref": "insideSubnetB" },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-InsideNetB" }
+      }
+    },
+    "dbSubnetA": {
+      "Description": "The ID of db subnet A",
+      "Value": { "Ref": "DBSubnetA" },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-dbNetA" }
+      }
+    },
+    "dbSubnetB": {
+      "Description": "The ID of db subnet B",
+      "Value": { "Ref": "DBSubnetB" },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-dbNetB" }
+      }
+    },
+    "webSG": {
+      "Description": "The ID of webSG",
+      "Value": { "Ref": "webSG" },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-webSG" }
+      }
+    },
+    "appSG": {
+      "Description": "The ID ofappSG",
+      "Value": { "Ref": "appSG" },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-appSG" }
+      }
+    },
+    "dbSG": {
+      "Description": "The ID of dbSG",
+      "Value": { "Ref": "dbSG" },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-dbSG" }
+      }
+    }
+  }
+
+```
+
+</p>
+</details>
+
+#### 2-db-setup
+<details>
+      <summary>Drop Down</summary><p>
+
+      
+```json
+
+```
+
+</p>
+</details>
+
+#### 2-swc-setup
+<details>
+      <summary>Drop Down</summary><p>
+
+      
+```json
+
+```
+
+</p>
+</details>
+
+#### 3-app-launch-configs
+<details>
+      <summary>Drop Down</summary><p>
+
+      
+```json
+
+```
+
+</p>
+</details>
+
+#### 4-app-asg-lb
+<details>
+      <summary>Drop Down</summary><p>
+
+      
+```json
+
+```
+
+</p>
+</details>
+
+#### 5-web-launch-configs
+<details>
+      <summary>Drop Down</summary><p>
+
+      
+```json
+
+```
+
+</p>
+</details>
+
+#### 6-web-asg-lb
+<details>
+      <summary>Drop Down</summary><p>
+
+      
+```json
+
+```
+
+</p>
+</details>
+
