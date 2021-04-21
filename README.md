@@ -687,10 +687,10 @@ This resource creates the VPC our architecture will live in.
 </p>
 </details>
 
-#### outsideSubnetA
+<!-- #### outsideSubnetA -->
 
 <details>
-      <summary>Drop Down</summary><p>
+      <summary><strong>outsideSubnetA</strong></summary><p>
 This resource creates one of the outside subnets we are using in the VPC.  This process is the same for the inside subnets and DB subnets.  The only thing that changes is the reference to the Availability Zone, CidrBlock and if it should give out public IP addresses.
 We have two inside, outside, and DB subnets that are created with this same process.
       
@@ -716,10 +716,10 @@ We have two inside, outside, and DB subnets that are created with this same proc
 </p>
 </details>
 
-#### insideSubnetA
+<!-- #### insideSubnetA -->
 
 <details>
-      <summary>Drop Down</summary><p>
+      <summary><strong>insideSubnetA</strong></summary><p>
 This resource creates one of the inside subnets we are using in the VPC. In this one we can see that the MapPublicIP option is missing because we do not want our inside net to be publicly accessible.
       
 ```json
@@ -737,10 +737,10 @@ This resource creates one of the inside subnets we are using in the VPC. In this
 </p>
 </details>
 
-#### DBSubnetA
+<!-- #### DBSubnetA -->
 
 <details>
-      <summary>Drop Down</summary><p>
+      <summary><strong>DBSubnetA</strong></summary><p>
 This resource creates one of the Db subnets we are using in the VPC. In this one we can see that the MapPublicIP option is missing because we do not want our inside net to be publicly accessible.
       
 ```json
