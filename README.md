@@ -655,7 +655,15 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"outsideSubnetA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "MapPublicIpOnLaunch": true,
+        "VpcId": { "Ref": "VPC" },
+        "CidrBlock": { "Ref": "OutsideNetA" },
+        "AvailabilityZone": { "Ref": "AvailabilityZone1" }
+      }
+    }
     
 ```
 
@@ -669,7 +677,14 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"insideSubnetA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "CidrBlock": { "Ref": "InsideNetA" },
+        "AvailabilityZone": { "Ref": "AvailabilityZone1" }
+      }
+    }
     
 ```
 
@@ -683,7 +698,14 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"DBSubnetA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "CidrBlock": { "Ref": "DBNetA" },
+        "AvailabilityZone": { "Ref": "AvailabilityZone1" }
+      }
+    }
     
 ```
 
@@ -697,7 +719,27 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"webSG": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow http and port 3000 to web servers",
+        "VpcId": { "Ref": "VPC" },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 3000,
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    }
     
 ```
 
@@ -711,7 +753,40 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"appSG": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "DependsOn": ["outsideSubnetB", "outsideSubnetA"],
+      "Properties": {
+        "GroupDescription": "Allow http to app server",
+        "VpcId": { "Ref": "VPC" },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "CidrIp": { "Ref": "OutsideNetA" }
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "CidrIp": { "Ref": "OutsideNetB" }
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIp": { "Ref": "OutsideNetA" }
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIp": { "Ref": "OutsideNetB" }
+          }
+        ]
+      }
+    }
     
 ```
 
@@ -725,7 +800,28 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"dbSG": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "DependsOn": ["insideSubnetA", "insideSubnetB"],
+      "Properties": {
+        "GroupDescription": "Allow mysql access to db",
+        "VpcId": { "Ref": "VPC" },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 3306,
+            "ToPort": 3306,
+            "CidrIp": { "Ref": "InsideNetA" }
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 3306,
+            "ToPort": 3306,
+            "CidrIp": { "Ref": "InsideNetB" }
+          }
+        ]
+      }
+    }
     
 ```
 
@@ -739,7 +835,12 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"IG": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [{ "Key": "Name", "Value": "cfIG" }]
+      }
+    }
     
 ```
 
@@ -753,7 +854,13 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"AttachGateway": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "InternetGatewayId": { "Ref": "IG" }
+      }
+    }
     
 ```
 
@@ -767,7 +874,12 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"OutsideRT": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" }
+      }
+    }
     
 ```
 
@@ -781,7 +893,15 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"myRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "IG",
+      "Properties": {
+        "RouteTableId": { "Ref": "OutsideRT" },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": { "Ref": "IG" }
+      }
+    }
     
 ```
 
@@ -795,7 +915,15 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"insideRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "NATGW",
+      "Properties": {
+        "RouteTableId": { "Ref": "InsideRT" },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": { "Ref": "NATGW" }
+      }
+    }
     
 ```
 
@@ -809,7 +937,13 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"RTSubnetAssocA": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "outsideSubnetA" },
+        "RouteTableId": { "Ref": "OutsideRT" }
+      }
+    }
     
 ```
 
@@ -824,7 +958,14 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"NATGW": {
+      "Type": "AWS::EC2::NatGateway",
+      "DependsOn": "EIP",
+      "Properties": {
+        "AllocationId": { "Fn::GetAtt": ["EIP", "AllocationId"] },
+        "SubnetId": { "Ref": "outsideSubnetA" }
+      }
+    }
     
 ```
 
@@ -838,7 +979,13 @@ This resource calls out to the networkSetup template and passes down parameters 
 This resource calls out to the networkSetup template and passes down parameters for the template to use. 
       
 ```json
-
+"EIP": {
+      "DependsOn": "AttachGateway",
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc"
+      }
+    }
     
 ```
 
