@@ -956,7 +956,7 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-#### 2-db-setup
+## 2-db-setup
 <details>
       <summary>Drop Down</summary><p>
 
@@ -968,7 +968,7 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-#### 2-swc-setup
+## 2-swc-setup
 <details>
       <summary>Drop Down</summary><p>
 
@@ -980,7 +980,7 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-#### 3-app-launch-configs
+## 3-app-launch-configs
 <details>
       <summary>Drop Down</summary><p>
 
@@ -992,7 +992,7 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-#### 4-app-asg-lb
+## 4-app-asg-lb
 <details>
       <summary>Drop Down</summary><p>
 
@@ -1004,7 +1004,7 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-#### 5-web-launch-configs
+## 5-web-launch-configs
 <details>
       <summary>Drop Down</summary><p>
 
@@ -1016,7 +1016,7 @@ This resource calls out to the networkSetup template and passes down parameters 
 </p>
 </details>
 
-#### 6-web-asg-lb
+## 6-web-asg-lb
 <details>
       <summary>Drop Down</summary><p>
 
