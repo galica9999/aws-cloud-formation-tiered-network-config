@@ -657,10 +657,9 @@ We will break up the file into more readable chunks for each section and resourc
 
 ### Resources
 
-#### VPC
-
+<!-- #### VPC -->
 <details>
-      <summary><strong>#### VPC</strong></summary><p>
+      <summary><strong>VPC</strong></summary><p>
 This resource creates the VPC our architecture will live in. 
       
 ```json
