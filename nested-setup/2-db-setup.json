@@ -74,12 +74,8 @@
     "DB": {
       "Type": "AWS::RDS::DBInstance",
       "Properties": {
-        "DBInstanceIdentifier": {
-          "Ref": "DBInstanceID"
-        },
-        "DBName": {
-          "Ref": "DBName"
-        },
+        "DBInstanceIdentifier": { "Ref": "DBInstanceID" },
+        "DBName": { "Ref": "DBName" },
         "DBInstanceClass": {
           "Ref": "DBInstanceClass"
         },

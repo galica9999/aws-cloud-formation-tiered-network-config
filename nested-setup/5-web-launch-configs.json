@@ -1,6 +1,9 @@
 {
   "Description": "Setting up launch configs",
   "Parameters": {
+    "route53DNS": {
+      "Type": "String"
+    },
     "WebAMItype": {
       "Description": "Instance type for app server",
       "Type": "String",
@@ -65,9 +68,7 @@
 
     "webAMI": {
       "Description": "AMI for webend server",
-      "Type": "String",
-      "Default": "ami-0f1909d8e1611bf25",
-      "AllowedValues": ["ami-0f1909d8e1611bf25"]
+      "Type": "String"
     },
 
     "webKeyName": {
@@ -76,7 +77,7 @@
     },
     "appCloudformationSG": { "Type": "String" },
     "webCloudformationSG": { "Type": "String" },
-    "appALB": { "Type": "String" }
+    "appALBDNS": { "Type": "String" }
   },
   "Resources": {
     "webLaunchConfig": {
@@ -93,21 +94,20 @@
                 "",
                 [
                   "#!/bin/bash\n",
-                  "sed -i -E 's/(host:(s+)?).+,/\\1",
-                  "\"",
-                  { "Ref": "appALB" },
-                  "\"",
-                  ",/g\" /var/appServer/index.js\n",
-                  "sed -i -E 's/(user:(s+)?).+,/\\1",
-                  "\"",
-                  { "Ref": "appALB" },
-                  "\"",
-                  ",/g\" /var/appServer/index.js\n",
-                  "sed -i -E 's/(password:(s+)?).+,/\\1",
-                  "\"",
-                  { "Ref": "appALB" },
-                  "\"",
-                  ",/g\" /var/appServer/index.js\n"
+                  "sudo yum install -y epel-release\n",
+                  "sudo yum install -y nginx\n",
+                  "sudo yum install -y wget\n",
+                  "sudo yum install -y unzip\n",
+                  "sudo yum install -y lsof\n",
+                  "sudo yum install -y ipset\n",
+                  "cd /etc/nginx\n",
+                  "sudo mv nginx.conf nginx.conf.backup\n",
+                  "sudo wget https://safeapplabfiles.s3.amazonaws.com/nginx.conf\n",
+                  "sudo sed -i -E 's/AppNLB.region.amazonaws.com/",
+                  { "Ref": "appALBDNS" },
+                  "/g' nginx.conf\n",
+                  "sudo systemctl restart nginx\n",
+                  "sudo systemctl enable nginx\n"
                 ]
               ]
             }

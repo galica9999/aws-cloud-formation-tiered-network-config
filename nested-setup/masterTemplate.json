@@ -1,6 +1,20 @@
 {
   "Description": "master stack template.  gets all parameters and then calls subsequent stacks to be created.",
+  "Mappings": {
+    "RegionMap": {
+      "us-east-1": { "HVM": "ami-00e87074e52e6c9f9" },
+      "us-west-1": { "HVM": "ami-0bdb828fd58c52235" },
+      "eu-west-1": { "HVM": "ami-08d2d8b00f270d03b" },
+      "ap-southeast-1": { "HVM": "ami-0adfdaea54d40922b" },
+      "ap-northeast-1": { "HVM": "ami-0ddea5e0f69c193a4" }
+    }
+  },
   "Parameters": {
+    "route53DNS": {
+      "Default": "test-web-app.com",
+      "Description": "This will be the name of the website address",
+      "Type": "String"
+    },
     "CidrBlock": {
       "AllowedPattern": "((\\d{1,3})\\.){3}\\d{1,3}/\\d{1,2}",
       "Default": "10.0.0.0/16",
@@ -61,7 +75,7 @@
       "ConstraintDescription": "Must begin with a letter and must not end with a hyphen or contain two consecutive hyphens."
     },
     "DBName": {
-      "Default": "mydb",
+      "Default": "WordPress",
       "Description": "My database",
       "Type": "String",
       "MinLength": "1",
@@ -222,18 +236,7 @@
         "cg1.4xlarge"
       ]
     },
-    "AppAMI": {
-      "Description": "AMI for app server",
-      "Type": "String",
-      "Default": "ami-03431b5a22dff7ba3",
-      "AllowedValues": ["ami-03431b5a22dff7ba3"]
-    },
-    "webAMI": {
-      "Description": "AMI for webend server",
-      "Type": "String",
-      "Default": "ami-0f1909d8e1611bf25",
-      "AllowedValues": ["ami-0f1909d8e1611bf25"]
-    },
+
     "appKeyName": {
       "Description": "EC2 KeyPair to enable SSH access to the instance",
       "Type": "AWS::EC2::KeyPair::KeyName"
@@ -293,18 +296,35 @@
         }
       }
     },
+    "SWCSetup": {
+      "Type": "AWS::CloudFormation::Stack",
+      "DependsOn": ["networkSetup"],
+      "Properties": {
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/2-swc-setup.json",
+        "Parameters": {
+          "VPCID": {
+            "Fn::GetAtt": ["networkSetup", "Outputs.StackVPC"]
+          },
+          "S3BucketName": {
+            "Ref": "S3BucketName"
+          },
+          "ExternalID": {
+            "Ref": "ExternalID"
+          }
+        }
+      }
+    },
     "appLaunchConfig": {
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["DBSetup"],
       "Properties": {
         "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/3-app-launch-configs.json",
         "Parameters": {
-          "WebAMItype": { "Ref": "WebAMItype" },
           "AppAMItype": { "Ref": "AppAMItype" },
-          "AppAMI": { "Ref": "AppAMI" },
-          "webAMI": { "Ref": "webAMI" },
+          "AppAMI": {
+            "Fn::FindInMap": ["RegionMap", { "Ref": "AWS::Region" }, "HVM"]
+          },
           "appKeyName": { "Ref": "appKeyName" },
-          "webKeyName": { "Ref": "webKeyName" },
           "appCloudformationSG": {
             "Fn::GetAtt": ["networkSetup", "Outputs.appSG"]
           },
@@ -359,8 +379,13 @@
       "Properties": {
         "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/5-web-launch-configs.json",
         "Parameters": {
+          "route53DNS": {
+            "Ref": "route53DNS"
+          },
           "WebAMItype": { "Ref": "WebAMItype" },
-          "webAMI": { "Ref": "webAMI" },
+          "webAMI": {
+            "Fn::FindInMap": ["RegionMap", { "Ref": "AWS::Region" }, "HVM"]
+          },
           "webKeyName": { "Ref": "webKeyName" },
           "appCloudformationSG": {
             "Fn::GetAtt": ["networkSetup", "Outputs.appSG"]
@@ -368,7 +393,9 @@
           "webCloudformationSG": {
             "Fn::GetAtt": ["networkSetup", "Outputs.webSG"]
           },
-          "appALB": { "Fn::GetAtt": ["AppAsgLb", "Outputs.appLoadBalancer"] }
+          "appALBDNS": {
+            "Fn::GetAtt": ["AppAsgLb", "Outputs.appLoadBalancerDNS"]
+          }
         }
       }
     },
@@ -398,24 +425,6 @@
           },
           "webLaunchConfigVersion": {
             "Fn::GetAtt": ["webLaunchConfig", "Outputs.webLaunchConfigVersion"]
-          }
-        }
-      }
-    },
-    "SWCSetup": {
-      "Type": "AWS::CloudFormation::Stack",
-      "DependsOn": ["networkSetup"],
-      "Properties": {
-        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/2-swc-setup.json",
-        "Parameters": {
-          "VPCID": {
-            "Fn::GetAtt": ["networkSetup", "Outputs.StackVPC"]
-          },
-          "S3BucketName": {
-            "Ref": "S3BucketName"
-          },
-          "ExternalID": {
-            "Ref": "ExternalID"
           }
         }
       }

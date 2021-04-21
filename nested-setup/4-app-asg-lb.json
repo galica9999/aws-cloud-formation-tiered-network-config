@@ -13,6 +13,7 @@
     "appASG": {
       "Type": "AWS::AutoScaling::AutoScalingGroup",
       "Properties": {
+        "TargetGroupARNs": [{ "Ref": "appTargetGroup" }],
         "MinSize": "1",
         "MaxSize": "2",
         "DesiredCapacity": "1",
@@ -31,7 +32,7 @@
     "appLoadBalancer": {
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
       "Properties": {
-        "Scheme": "internet-facing",
+        "Scheme": "internal",
         "IpAddressType": "ipv4",
         "Name": "appLoadBalancer",
         "Type": "application",
@@ -46,11 +47,14 @@
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties": {
         "HealthCheckEnabled": true,
-        "HealthCheckPath": "/url",
+        "HealthCheckPath": "/",
         "HealthCheckPort": "80",
         "HealthCheckProtocol": "HTTP",
-        "HealthCheckTimeoutSeconds": 10,
+        "HealthCheckTimeoutSeconds": 3,
         "HealthyThresholdCount": 3,
+        "Matcher": {
+          "HttpCode": "200-399"
+        },
         "Name": "appTargetGroup",
         "Port": 80,
         "Protocol": "HTTP",
@@ -101,6 +105,13 @@
       "Value": { "Ref": "appLoadBalancer" },
       "Export": {
         "Name": { "Fn::Sub": "${AWS::StackName}-appLoadBalancer" }
+      }
+    },
+    "appLoadBalancerDNS": {
+      "Description": "App Load Balancer",
+      "Value": { "Fn::GetAtt": ["appLoadBalancer", "DNSName"] },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-appLoadBalancerDNS" }
       }
     },
     "appASG": {

@@ -13,6 +13,7 @@
     "webASG": {
       "Type": "AWS::AutoScaling::AutoScalingGroup",
       "Properties": {
+        "TargetGroupARNs": [{ "Ref": "webTargetGroup" }],
         "MinSize": "1",
         "MaxSize": "2",
         "DesiredCapacity": "1",
@@ -46,11 +47,14 @@
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties": {
         "HealthCheckEnabled": true,
-        "HealthCheckPath": "/url",
+        "HealthCheckPath": "/",
         "HealthCheckPort": "80",
         "HealthCheckProtocol": "HTTP",
-        "HealthCheckTimeoutSeconds": 10,
+        "HealthCheckTimeoutSeconds": 3,
         "HealthyThresholdCount": 3,
+        "Matcher": {
+          "HttpCode": "200-399"
+        },
         "Name": "webTargetGroup",
         "Port": 80,
         "Protocol": "HTTP",
