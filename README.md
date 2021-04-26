@@ -1400,8 +1400,8 @@ The app-asg-lb template is used to create the auto scaling group and load balanc
 
 <details><summary><h4 style="display:inline">appASG</h4></summary>
 <p>
-This resource creates the launch configuration we will use for the application AMIs.
-      
+This resource creates the application auto scaling group.  This group will allow us to have the number of AMIs increase or decrease based on load.
+
 ```json
 "appASG": {
       "Type": "AWS::AutoScaling::AutoScalingGroup",
@@ -1422,17 +1422,24 @@ This resource creates the launch configuration we will use for the application A
         ]
       }
     }
-    
+
 ```
 
-- **ImageId** - This field is used to tell what image will be used to create the AMI.
+- **TargetGroupARNs** - This field is used to tell what image will be used to create the AMI.
+- **MinSize** - This field is to determine the minimum running amount of AMIs we want to be available.
+- **MaxSize** - This will determine the maximum amount of AMIs to be available during peak load.
+- **DesiredCapacity** - The desired capacity is how many should be available at any time, but can be more than the minsize and less than the maxsize.
+- **LaunchTemaplate** - This is the launch template that will be used when a new AMI is created.
+- **LaunchTemplateId** - This is the ID of the launch template we want to use.
+- **Version** - This is the version of the launch template we want to use.
+- **VPCZoneIdentifier** - These are the subnets that the autoscaling group will deploy the AMIs into.
 
 </p>
 </details>
 
 <details><summary><h4 style="display:inline">appLoadBalancer</h4></summary>
 <p>
-This resource creates the launch configuration we will use for the application AMIs.
+This resource creates applicationn load balancer.  It will send requests between all of the instances in the autoscaling group.
       
 ```json
 "appLoadBalancer": {
@@ -1452,14 +1459,18 @@ This resource creates the launch configuration we will use for the application A
     
 ```
 
-- **ImageId** - This field is used to tell what image will be used to create the AMI.
+- **Scheme** - This is used to determine if the load balancer will be internet facing or not. In this case we are using an internal load balancer.
+- **IpAddressType** - The type of IP to assign. We are using IPv4, not IPv6.
+- **Type** - This determines if it should be an application or network load balancer.
+- **SecurityGroups** - These are the security groups the laod balancer will be linked to.
+- **Subnets** - These are the subnets the load balancer will live in.
 
 </p>
 </details>
 
 <details><summary><h4 style="display:inline">appTargetGroup</h4></summary>
 <p>
-This resource creates the launch configuration we will use for the application AMIs.
+This resource creates a target group the auto-scaling group will use to link to. The target group will do health checks as well to determine the state of an instance.
       
 ```json
 "appTargetGroup": {
@@ -1485,14 +1496,26 @@ This resource creates the launch configuration we will use for the application A
     
 ```
 
-- **ImageId** - This field is used to tell what image will be used to create the AMI.
+- **HealthCheckEnabled** - True because we want a health check for each instance.
+- **HealthCheckPath** - The path to use for the healthcheck. We are using the root path.
+- **HealthCheckPort** - The port to use for the health check.
+- **HealthCheckProtocol** - Protocol to check the health of the instance.
+- **HealthCheckTimeoutSeconds** - How many seconds it waits for a response before it times out.
+- **HealthyThresholdCount** - How many healthy responses are needed to mark the instance as healthy.
+- **Matcher** - The things to match for healthiness.
+- **HttpCode** - THis is a range of codes that we are expecting if the instance is healthy. Anything outside these codes are considered unhealthy.
+- **Port** - The port to sue to check for healthiness.
+- **Protocol** - Which protocol is being used to check their healthiness.
+- **TargetType** - This is used to say we are targeting an instance. This must be used for target groups.
+- **UnhealthyThresholdCount** - How many unhealthy responses it takes to mark the target as unhealthy.
+- **VpcId** - This is the id of the VPC the target group will reside in.
 
 </p>
 </details>
 
 <details><summary><h4 style="display:inline">HTTPListenerRule</h4></summary>
 <p>
-This resource creates the launch configuration we will use for the application AMIs.
+This resource creates the listener rule for the load balancer listener. This is what will detrermine what to do with a request when it sees it.
       
 ```json
 "HTTPListenerRule": {
@@ -1517,14 +1540,18 @@ This resource creates the launch configuration we will use for the application A
     
 ```
 
-- **ImageId** - This field is used to tell what image will be used to create the AMI.
+- **Actions** - This field is a list of what we want the rule to do when it matches a condition. For this action, we want it to forward the request to our app target group instances.
+
+* **Conditions** - This field is used to determine which action will be applied when a request matches this condition. We are checking the request by source-ip and the source IP we are looking for is any IP.
+* **ListenerARN** - This field used to link the rule to a listener. In this case it is out http listener.
+* **Priority** This is what order the rule will be hit in. We have it set to be first.
 
 </p>
 </details>
 
 <details><summary><h4 style="display:inline">HTTPListener</h4></summary>
 <p>
-This resource creates the launch configuration we will use for the application AMIs.
+This resource creates the the http listener to look for new http traffic being sent to the load balancer.
       
 ```json
 "HTTPlistener": {
@@ -1547,7 +1574,11 @@ This resource creates the launch configuration we will use for the application A
     
 ```
 
-- **ImageId** - This field is used to tell what image will be used to create the AMI.
+- **DefaultActions** - If a rule doesn't have its action, by default we will forward the requests to our app target group instances.
+
+* **LoadBalancerArn** - This is the load balancer the listener should be linked to.
+* **Port** - The port we are listening on.
+* **Protocol** - The protocol we are listening for.
 
 </p>
 </details>
@@ -1606,6 +1637,7 @@ The web launch config serves a similar purpose as the application launch config 
 
 <details><summary><h4 style="display:inline">webASG</h4></summary>
 <p>
+This resource is creating the auto scaling group for the web servers.  It is the same as the app server group but with a different launch config and subnets.
 
 ```json
 "webASG": {
@@ -1635,6 +1667,7 @@ The web launch config serves a similar purpose as the application launch config 
 
 <details><summary><h4 style="display:inline">webLoadBalancer</h4></summary>
 <p>
+This resource creates a load balancer for the web servers.  The difference in this one compared to the app load balancer is that this one is internet facing and in the outside subnets.
 
 ```json
 "webLoadBalancer": {
@@ -1659,6 +1692,7 @@ The web launch config serves a similar purpose as the application launch config 
 
 <details><summary><h4 style="display:inline">webTargetGroup</h4></summary>
 <p>
+This resources creates the web target group and it is similar to the appp target group.
 
 ```json
 "webTargetGroup": {
@@ -1689,6 +1723,7 @@ The web launch config serves a similar purpose as the application launch config 
 
 <details><summary><h4 style="display:inline">HTTPListenerRule</h4></summary>
 <p>
+This creates the listener rule for the web listener and is the same as the app http listener rule.
 
 ```json
 "HTTPListenerRule": {
@@ -1718,6 +1753,7 @@ The web launch config serves a similar purpose as the application launch config 
 
 <details><summary><h4 style="display:inline">HTTPlistener</h4></summary>
 <p>
+This resource creates the http listener for the web load balancer.  It is like the app http listener except it targerts the web target group.
 
 ```json
 "HTTPlistener": {
