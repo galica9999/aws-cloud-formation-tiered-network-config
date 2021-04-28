@@ -24,6 +24,12 @@ With these configuration files, we will be building out a 3-tiered architecture 
 
 The architecture consists of a web tier that lives in a public subnet, an application tier that is in a private subnet, and a database tier that is in another private subnet. The web tier has an application load balancer that will balance requests between multiple hosts within the subnet. Then each host in the web application tier will reach out to a load balancer for the application tier. This load balancer will do the same thing as the web balancer but for the application hosts. Then the application hosts will reach out the database without a load balancer. The end goal of this setup is to have a running web application utilizing this architecture.
 
+# Initial Setup
+
+To get this setup working, we first need to make a S3 bucket and make it publicly accessible. This will not make the whole bucket publicly accessible, but it does allow us to pick and choose what files can be publicly accessed. Once the bucket has been created we need to download all the files from the repo including the web config files.
+
+Then we need to upload all of the files into this S3 bucket. Once they are uplaoded, we only need to make two of the files publicly accesible. Those two files are the web-config files. The wordpress config and the nginx config. Once that has been finished, we need to update all of the teamplate files URL for the templates to be the URL of the file in AWS.
+
 # Nested stack configuration files
 
 To access the nested stack files, you can go to the nested stack directory in this repo. Within that directory there are 8 files in total. The _masterTemplate.json_ is the template you will use to run all the subsequent json files in this folder.
