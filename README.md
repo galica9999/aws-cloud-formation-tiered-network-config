@@ -30,6 +30,8 @@ To get this setup working, we first need to make a S3 bucket and make it publicl
 
 Then we need to upload all of the files into this S3 bucket. Once they are uplaoded, we only need to make two of the files publicly accesible. Those two files are the web-config files. The wordpress config and the nginx config. Once that has been finished, we need to update all of the teamplate files URL for the templates to be the URL of the file in AWS.
 
+For each template URL in the resources section of the masterTemplate, we will have a "change-me-filename-s3-url" where the filename will be the nake of each file. This will let us know which S3 file URL needs to be used. Additionally, we need to update the wget URLs for the user data scripts in the two launch configs. Those will be set to "changeme-nginx-url" in the web launch config file and "changeme-wordpress-url" for the app launch config file. Once those updates have been completed, we just need to re-upload the two launch config files.
+
 # Nested stack configuration files
 
 To access the nested stack files, you can go to the nested stack directory in this repo. Within that directory there are 8 files in total. The _masterTemplate.json_ is the template you will use to run all the subsequent json files in this folder.
