@@ -20,7 +20,7 @@ This guide will break down how we achieved this setup and how it works. As we ge
 
 With these configuration files, we will be building out a 3-tiered architecture setup using a nested stack setup. The architecture will look like so:
 
-![diagram](https://user-images.githubusercontent.com/10239022/116435346-3e6e5900-a819-11eb-96fb-042dd70ba317.jpeg)
+![architecture-diagram](https://user-images.githubusercontent.com/10239022/116435534-770e3280-a819-11eb-8d62-2db785b36d89.jpeg)
 
 The architecture consists of a web tier that lives in a public subnet, an application tier that is in a private subnet, and a database tier that is in another private subnet. The web tier has an application load balancer that will balance requests between multiple hosts within the subnet. Then each host in the web application tier will reach out to a load balancer for the application tier. This load balancer will do the same thing as the web balancer but for the application hosts. Then the application hosts will reach out the database without a load balancer. The end goal of this setup is to have a running web application utilizing this architecture.
 
