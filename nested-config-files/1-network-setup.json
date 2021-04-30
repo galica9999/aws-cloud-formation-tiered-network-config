@@ -69,7 +69,8 @@
         "MapPublicIpOnLaunch": true,
         "VpcId": { "Ref": "VPC" },
         "CidrBlock": { "Ref": "OutsideNetA" },
-        "AvailabilityZone": { "Ref": "AvailabilityZone1" }
+        "AvailabilityZone": { "Ref": "AvailabilityZone1" },
+        "Tags": [{ "Key": "Name", "Value": "WebSubnet1a" }]
       }
     },
     "outsideSubnetB": {
@@ -78,7 +79,8 @@
         "MapPublicIpOnLaunch": true,
         "VpcId": { "Ref": "VPC" },
         "CidrBlock": { "Ref": "OutsideNetB" },
-        "AvailabilityZone": { "Ref": "AvailabilityZone2" }
+        "AvailabilityZone": { "Ref": "AvailabilityZone2" },
+        "Tags": [{ "Key": "Name", "Value": "WebSubnet1b" }]
       }
     },
     "insideSubnetA": {
@@ -86,7 +88,8 @@
       "Properties": {
         "VpcId": { "Ref": "VPC" },
         "CidrBlock": { "Ref": "InsideNetA" },
-        "AvailabilityZone": { "Ref": "AvailabilityZone1" }
+        "AvailabilityZone": { "Ref": "AvailabilityZone1" },
+        "Tags": [{ "Key": "Name", "Value": "AppSubnet1a" }]
       }
     },
     "insideSubnetB": {
@@ -94,7 +97,8 @@
       "Properties": {
         "VpcId": { "Ref": "VPC" },
         "CidrBlock": { "Ref": "InsideNetB" },
-        "AvailabilityZone": { "Ref": "AvailabilityZone2" }
+        "AvailabilityZone": { "Ref": "AvailabilityZone2" },
+        "Tags": [{ "Key": "Name", "Value": "AppSubnet1b" }]
       }
     },
     "DBSubnetA": {
@@ -102,7 +106,8 @@
       "Properties": {
         "VpcId": { "Ref": "VPC" },
         "CidrBlock": { "Ref": "DBNetA" },
-        "AvailabilityZone": { "Ref": "AvailabilityZone1" }
+        "AvailabilityZone": { "Ref": "AvailabilityZone1" },
+        "Tags": [{ "Key": "Name", "Value": "DbSubnet1a" }]
       }
     },
     "DBSubnetB": {
@@ -110,7 +115,8 @@
       "Properties": {
         "VpcId": { "Ref": "VPC" },
         "CidrBlock": { "Ref": "BDNetB" },
-        "AvailabilityZone": { "Ref": "AvailabilityZone2" }
+        "AvailabilityZone": { "Ref": "AvailabilityZone2" },
+        "Tags": [{ "Key": "Name", "Value": "DbSubnet1b" }]
       }
     },
     "webSG": {
@@ -131,7 +137,8 @@
             "ToPort": 3000,
             "CidrIp": "0.0.0.0/0"
           }
-        ]
+        ],
+        "Tags": [{ "Key": "Name", "Value": "webSG" }]
       }
     },
     "appSG": {
@@ -171,7 +178,8 @@
             "ToPort": 22,
             "CidrIp": { "Ref": "OutsideNetB" }
           }
-        ]
+        ],
+        "Tags": [{ "Key": "Name", "Value": "appSG" }]
       }
     },
     "dbSG": {
@@ -193,13 +201,14 @@
             "ToPort": 3306,
             "CidrIp": { "Ref": "InsideNetB" }
           }
-        ]
+        ],
+        "Tags": [{ "Key": "Name", "Value": "dbSG" }]
       }
     },
     "IG": {
       "Type": "AWS::EC2::InternetGateway",
       "Properties": {
-        "Tags": [{ "Key": "Name", "Value": "cfIG" }]
+        "Tags": [{ "Key": "Name", "Value": "InternetGW" }]
       }
     },
     "AttachGateway": {
@@ -221,19 +230,22 @@
       "Properties": {
         "RouteTableId": { "Ref": "OutsideRT" },
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": { "Ref": "IG" }
+        "GatewayId": { "Ref": "IG" },
+        "Tags": [{ "Key": "Name", "Value": "WebRT1a" }]
       }
     },
     "InsideRT": {
       "Type": "AWS::EC2::RouteTable",
       "Properties": {
-        "VpcId": { "Ref": "VPC" }
+        "VpcId": { "Ref": "VPC" },
+        "Tags": [{ "Key": "Name", "Value": "AppRT1a" }]
       }
     },
     "DbRT": {
       "Type": "AWS::EC2::RouteTable",
       "Properties": {
-        "VpcId": { "Ref": "VPC" }
+        "VpcId": { "Ref": "VPC" },
+        "Tags": [{ "Key": "Name", "Value": "DbRt1a" }]
       }
     },
     "insideRoute": {
@@ -292,14 +304,16 @@
       "DependsOn": "EIP",
       "Properties": {
         "AllocationId": { "Fn::GetAtt": ["EIP", "AllocationId"] },
-        "SubnetId": { "Ref": "outsideSubnetA" }
+        "SubnetId": { "Ref": "outsideSubnetA" },
+        "Tags": [{ "Key": "Name", "Value": "NATGW1a" }]
       }
     },
     "EIP": {
       "DependsOn": "AttachGateway",
       "Type": "AWS::EC2::EIP",
       "Properties": {
-        "Domain": "vpc"
+        "Domain": "vpc",
+        "Tags": [{ "Key": "Name", "Value": "NATGW1aEIP" }]
       }
     }
   },

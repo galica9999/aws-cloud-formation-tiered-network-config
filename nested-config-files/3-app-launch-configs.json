@@ -125,7 +125,8 @@
               ]
             }
           }
-        }
+        },
+        "Tags": [{ "Key": "Name", "Value": "appServerLC" }]
       }
     }
   },

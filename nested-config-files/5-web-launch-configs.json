@@ -113,7 +113,8 @@
             }
           }
         }
-      }
+      },
+      "Tags": [{ "Key": "Name", "Value": "webServerLC" }]
     }
   },
   "Outputs": {

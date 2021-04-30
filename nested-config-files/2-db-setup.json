@@ -65,8 +65,8 @@
         ],
         "Tags": [
           {
-            "Key": "String",
-            "Value": "String"
+            "Key": "Name",
+            "Value": "dbSubnetGroup"
           }
         ]
       }
