@@ -79,7 +79,7 @@
     "DBUsername": { "Type": "String" }
   },
   "Resources": {
-    "appLaunchConfig": {
+    "appServerLC": {
       "Type": "AWS::EC2::LaunchTemplate",
       "Properties": {
         "LaunchTemplateData": {
@@ -125,25 +125,24 @@
               ]
             }
           }
-        },
-        "Tags": [{ "Key": "Name", "Value": "appServerLC" }]
+        }
       }
     }
   },
   "Outputs": {
     "appLaunchConfig": {
       "Description": "App launchconfig",
-      "Value": { "Ref": "appLaunchConfig" },
+      "Value": { "Ref": "appServerLC" },
       "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-appLaunchConfig" }
+        "Name": { "Fn::Sub": "${AWS::StackName}-appServerLC" }
       }
     },
 
     "appLaunchConfigVersion": {
       "Description": "App launchconfig version",
-      "Value": { "Fn::GetAtt": ["appLaunchConfig", "LatestVersionNumber"] },
+      "Value": { "Fn::GetAtt": ["appServerLC", "LatestVersionNumber"] },
       "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-appLaunchConfigVersion" }
+        "Name": { "Fn::Sub": "${AWS::StackName}-appLCVersion" }
       }
     }
   }

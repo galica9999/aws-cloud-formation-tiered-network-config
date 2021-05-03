@@ -80,7 +80,7 @@
     "appALBDNS": { "Type": "String" }
   },
   "Resources": {
-    "webLaunchConfig": {
+    "webServerLC": {
       "Type": "AWS::EC2::LaunchTemplate",
       "Properties": {
         "LaunchTemplateData": {
@@ -113,23 +113,22 @@
             }
           }
         }
-      },
-      "Tags": [{ "Key": "Name", "Value": "webServerLC" }]
+      }
     }
   },
   "Outputs": {
     "webLaunchConfig": {
       "Description": "Web launchconfig",
-      "Value": { "Ref": "webLaunchConfig" },
+      "Value": { "Ref": "webServerLC" },
       "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-webLaunchConfig" }
+        "Name": { "Fn::Sub": "${AWS::StackName}-webServerLC" }
       }
     },
     "webLaunchConfigVersion": {
       "Description": "Web launchconfig version",
-      "Value": { "Fn::GetAtt": ["webLaunchConfig", "LatestVersionNumber"] },
+      "Value": { "Fn::GetAtt": ["webServerLC", "LatestVersionNumber"] },
       "Export": {
-        "Name": { "Fn::Sub": "${AWS::StackName}-webLaunchConfigVersion" }
+        "Name": { "Fn::Sub": "${AWS::StackName}-webServerLCVersion" }
       }
     }
   }

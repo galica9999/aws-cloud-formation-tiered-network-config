@@ -346,7 +346,7 @@
         }
       }
     },
-    "AppAsgLb": {
+    "ScaleAppServers": {
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["appLaunchConfig"],
       "Properties": {
@@ -378,7 +378,7 @@
     },
     "webLaunchConfig": {
       "Type": "AWS::CloudFormation::Stack",
-      "DependsOn": ["AppAsgLb"],
+      "DependsOn": ["ScaleAppServers"],
       "Properties": {
         "TemplateURL": "change-me-5-web-launch-config-s3-url",
         "Parameters": {
@@ -402,7 +402,7 @@
         }
       }
     },
-    "WebAsgLb": {
+    "ScaleWebServers": {
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["webLaunchConfig"],
       "Properties": {

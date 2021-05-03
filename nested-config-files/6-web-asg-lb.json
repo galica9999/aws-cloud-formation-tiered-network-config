@@ -26,8 +26,7 @@
         "VPCZoneIdentifier": [
           { "Ref": "outsideCloudformationSubnetA" },
           { "Ref": "outsideCloudformationSubnetB" }
-        ],
-        "Tags": [{ "Key": "Name", "Value": "SacelWebServers" }]
+        ]
       }
     },
     "webLoadBalancer": {
@@ -35,14 +34,13 @@
       "Properties": {
         "Scheme": "internet-facing",
         "IpAddressType": "ipv4",
-        "Name": "webLoadBalancer",
+        "Name": "WebNLB",
         "Type": "application",
         "SecurityGroups": [{ "Ref": "webCloudformationSG" }],
         "Subnets": [
           { "Ref": "outsideCloudformationSubnetA" },
           { "Ref": "outsideCloudformationSubnetB" }
-        ],
-        "Tags": [{ "Key": "Name", "Value": "WebNLB" }]
+        ]
       }
     },
     "webTargetGroup": {
@@ -57,7 +55,7 @@
         "Matcher": {
           "HttpCode": "200-399"
         },
-        "Name": "webTargetGroup",
+        "Name": "WebServerPool",
         "Port": 80,
         "Protocol": "HTTP",
         "TargetType": "instance",

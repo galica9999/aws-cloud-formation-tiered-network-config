@@ -133,8 +133,8 @@
           },
           {
             "IpProtocol": "tcp",
-            "FromPort": 80,
-            "ToPort": 3000,
+            "FromPort": 22,
+            "ToPort": 22,
             "CidrIp": "0.0.0.0/0"
           }
         ],
@@ -152,7 +152,13 @@
             "IpProtocol": "tcp",
             "FromPort": 80,
             "ToPort": 80,
-            "CidrIp": "0.0.0.0/0"
+            "CidrIp": { "Ref": "InsideNetA" }
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "CidrIp": { "Ref": "InsideNetB" }
           },
           {
             "IpProtocol": "tcp",
@@ -241,6 +247,13 @@
         "Tags": [{ "Key": "Name", "Value": "AppRT1a" }]
       }
     },
+    "InsideRT2": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "Tags": [{ "Key": "Name", "Value": "AppRT1b" }]
+      }
+    },
     "DbRT": {
       "Type": "AWS::EC2::RouteTable",
       "Properties": {
@@ -255,6 +268,15 @@
         "RouteTableId": { "Ref": "InsideRT" },
         "DestinationCidrBlock": "0.0.0.0/0",
         "NatGatewayId": { "Ref": "NATGW" }
+      }
+    },
+    "insideRoute2": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "NATGW2",
+      "Properties": {
+        "RouteTableId": { "Ref": "InsideRT2" },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": { "Ref": "NATGW2" }
       }
     },
     "RTSubnetAssocA": {
@@ -282,7 +304,7 @@
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
         "SubnetId": { "Ref": "insideSubnetB" },
-        "RouteTableId": { "Ref": "InsideRT" }
+        "RouteTableId": { "Ref": "InsideRT2" }
       }
     },
     "RTDbSubnetAssocA": {
@@ -314,6 +336,23 @@
       "Properties": {
         "Domain": "vpc",
         "Tags": [{ "Key": "Name", "Value": "NATGW1aEIP" }]
+      }
+    },
+    "NATGW2": {
+      "Type": "AWS::EC2::NatGateway",
+      "DependsOn": "EIP2",
+      "Properties": {
+        "AllocationId": { "Fn::GetAtt": ["EIP2", "AllocationId"] },
+        "SubnetId": { "Ref": "outsideSubnetB" },
+        "Tags": [{ "Key": "Name", "Value": "NATGW1b" }]
+      }
+    },
+    "EIP2": {
+      "DependsOn": "AttachGateway",
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc",
+        "Tags": [{ "Key": "Name", "Value": "NATGW1bEIP" }]
       }
     }
   },

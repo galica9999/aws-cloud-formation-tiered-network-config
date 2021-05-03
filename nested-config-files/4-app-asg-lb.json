@@ -26,8 +26,7 @@
         "VPCZoneIdentifier": [
           { "Ref": "insideCloudformationSubnetA" },
           { "Ref": "insideCloudformationSubnetB" }
-        ],
-        "Tags": [{ "Key": "Name", "Value": "SacleAppServers" }]
+        ]
       }
     },
     "appLoadBalancer": {
@@ -35,14 +34,13 @@
       "Properties": {
         "Scheme": "internal",
         "IpAddressType": "ipv4",
-        "Name": "appLoadBalancer",
+        "Name": "AppNLB",
         "Type": "application",
         "SecurityGroups": [{ "Ref": "appCloudformationSG" }],
         "Subnets": [
           { "Ref": "insideCloudformationSubnetA" },
           { "Ref": "insideCloudformationSubnetB" }
-        ],
-        "Tags": [{ "Key": "Name", "Value": "AppNLB" }]
+        ]
       }
     },
     "appTargetGroup": {
@@ -57,7 +55,7 @@
         "Matcher": {
           "HttpCode": "200-399"
         },
-        "Name": "appTargetGroup",
+        "Name": "AppServerPool",
         "Port": 80,
         "Protocol": "HTTP",
         "TargetType": "instance",
