@@ -108,7 +108,7 @@
                   "sudo wget https://wordpress.org/latest.tar.gz\n",
                   "tar -xzf latest.tar.gz\n",
                   "cd wordpress\n",
-                  "sudo  wget https://safeapplabfiles.s3.amazonaws.com/wp-config.php\n",
+                  "sudo  wget changeme-wordpress-url\n",
                   "sudo sed -i -E 's/admintochange/",
                   { "Ref": "DBUsername" },
                   "/g' ./wp-config.php\n",
