@@ -102,7 +102,7 @@
                   "sudo yum install -y ipset\n",
                   "cd /etc/nginx\n",
                   "sudo mv nginx.conf nginx.conf.backup\n",
-                  "sudo wget changeme-nginx-url\n",
+                  "sudo wget https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/nginx.conf\n",
                   "sudo sed -i -E 's/INTERLANLB/",
                   { "Ref": "appALBDNS" },
                   "/g' nginx.conf\n",

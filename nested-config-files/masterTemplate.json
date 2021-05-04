@@ -262,7 +262,7 @@
     "networkSetup": {
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
-        "TemplateURL": "change-me-1-network-setup-s3-url",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/1-network-setup.json",
         "Parameters": {
           "CidrBlock": { "Ref": "CidrBlock" },
           "AvailabilityZone1": { "Ref": "AvailabilityZone1" },
@@ -279,7 +279,7 @@
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["networkSetup"],
       "Properties": {
-        "TemplateURL": "change-me-2-db-setup-s3-url",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/2-db-setup.json",
         "Parameters": {
           "DBInstanceID": { "Ref": "DBInstanceID" },
           "DBName": { "Ref": "DBName" },
@@ -303,7 +303,7 @@
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["networkSetup"],
       "Properties": {
-        "TemplateURL": "change-me-2-swc-setup-s3-url",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/2-swc-setup.json",
         "Parameters": {
           "VPCID": {
             "Fn::GetAtt": ["networkSetup", "Outputs.StackVPC"]
@@ -321,7 +321,7 @@
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["DBSetup"],
       "Properties": {
-        "TemplateURL": "change-me-3-app-launch-config-s3-url",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/3-app-launch-configs.json",
         "Parameters": {
           "AppAMItype": { "Ref": "AppAMItype" },
           "AppAMI": {
@@ -346,11 +346,11 @@
         }
       }
     },
-    "ScaleAppServers": {
+    "AppAsgLb": {
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["appLaunchConfig"],
       "Properties": {
-        "TemplateURL": "change-me-4-app-asg-lb-s3-urln",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/4-app-asg-lb.json",
         "Parameters": {
           "appLaunchConfig": {
             "Fn::GetAtt": ["appLaunchConfig", "Outputs.appLaunchConfig"]
@@ -378,9 +378,9 @@
     },
     "webLaunchConfig": {
       "Type": "AWS::CloudFormation::Stack",
-      "DependsOn": ["ScaleAppServers"],
+      "DependsOn": ["AppAsgLb"],
       "Properties": {
-        "TemplateURL": "change-me-5-web-launch-config-s3-url",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/5-web-launch-configs.json",
         "Parameters": {
           "route53DNS": {
             "Ref": "route53DNS"
@@ -402,11 +402,11 @@
         }
       }
     },
-    "ScaleWebServers": {
+    "WebAsgLb": {
       "Type": "AWS::CloudFormation::Stack",
       "DependsOn": ["webLaunchConfig"],
       "Properties": {
-        "TemplateURL": "change-me-6-web-asg-lb-s3-url",
+        "TemplateURL": "https://cloudformation--json-templates.s3-ap-northeast-1.amazonaws.com/6-web-asg-lb.json",
         "Parameters": {
           "webLaunchConfig": {
             "Fn::GetAtt": ["webLaunchConfig", "Outputs.webLaunchConfig"]

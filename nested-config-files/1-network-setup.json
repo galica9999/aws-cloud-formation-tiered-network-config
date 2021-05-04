@@ -236,8 +236,7 @@
       "Properties": {
         "RouteTableId": { "Ref": "OutsideRT" },
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": { "Ref": "IG" },
-        "Tags": [{ "Key": "Name", "Value": "WebRT1a" }]
+        "GatewayId": { "Ref": "IG" }
       }
     },
     "InsideRT": {
