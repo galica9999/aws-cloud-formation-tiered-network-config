@@ -348,7 +348,7 @@ We will be going over the 7 resources that we are creating in this master templa
 
 We will go over each of these resources as they are defined in the master template and then each resource will have their own section. Most of these won’t be too different from the masterTemplate, so we will only go over the if anything is different and how some of the functions are being used.
 
-<details><summary><h4 style="display:inline">networkSetup</h4></summary>
+<h1><details><summary><h4 style="display:inline">networkSetup</h4></summary>
 <p>
 This resource calls out to the networkSetup template and passes down parameters for the template to use. Then the nested template will create everything related to the base network.
       
@@ -377,7 +377,7 @@ This resource calls out to the networkSetup template and passes down parameters 
    _ **Parameters** - This holds the values of what will be sent to the template to be used for resource creation. This field works the same way as the parameters for the masterTemplate. \* **{"Ref":"nameOfResource"}** - For each of the parameters, we are using a reference assignment. This means we are pulling the value that was input into the parameter field called CidrBlock. It works the same way for the other parameters we create a reference for.
 
 </p>
-</details>
+</details></h1>
 
 <details><summary><h4 style="display:inline">DBSetup</h4></summary>
 <p>
